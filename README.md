@@ -2,13 +2,22 @@
 
 Website statis untuk berbagi tutorial. Tidak memerlukan server backend, database, atau biaya hosting. Buka `index.html` untuk melihat situs secara lokal.
 
-## Mengelola postingan
+## Login admin dan database postingan
 
-Tombol **Kelola** disembunyikan untuk pengunjung biasa. Untuk menampilkannya, buka alamat website dengan parameter `?admin=1`, misalnya `https://USERNAME.github.io/NAMA-REPO/?admin=1`. Dari panel itu kamu dapat menambahkan postingan, mengedit postingan yang ada, atau menghapusnya. Isian isi postingan ditampilkan sebagai artikel. Gunakan URL gambar publik yang boleh dipakai dan teks alternatif yang menjelaskan gambarnya.
+Admin ada di `/admin.html`. Login memakai Google, lalu Firebase Authentication dan Firestore membatasi perubahan postingan ke email terverifikasi `hendrakurniawanto@gmail.com`. Pengunjung website membaca postingan dari koleksi Firestore `posts`.
 
-Peringatan: `?admin=1` hanya menyembunyikan tombol dari tampilan biasa, bukan autentikasi. Siapa pun yang mengetahui parameter ini dapat membuka panel; kode situs juga bersifat publik. Perubahan disimpan di `localStorage` browser yang sedang dipakai, tidak tersinkron ke browser pengunjung lain, dan bisa hilang jika data situs dibersihkan.
+### Setup Firebase satu kali
 
-Untuk pengelolaan yang benar-benar hanya bisa dilakukan admin dan menerbitkan konten bersama, situs memerlukan backend/database serta autentikasi admin. Hosting statis saja tidak dapat menerbitkan perubahan `localStorage` menjadi konten bersama.
+1. Buat project gratis di [Firebase Console](https://console.firebase.google.com/) atau pilih project yang sudah ada.
+2. Tambahkan aplikasi Web di Project settings → General → Your apps. Salin konfigurasi web ke `firebase-config.js`, mengganti setiap nilai `ISI_DARI_FIREBASE_CONSOLE`. Nilai konfigurasi web Firebase memang tersedia di frontend; keamanan tulis dijaga oleh Firestore Rules, bukan dengan menyembunyikan config.
+3. Di Authentication → Sign-in method, aktifkan **Google**.
+4. Di Authentication → Settings → Authorized domains, tambahkan `hendrakurniawanto.github.io`.
+5. Buat database di Firestore Database. Pilih lokasi yang dekat dengan mayoritas pengunjung.
+6. Buka Firestore Database → Rules, tempel isi file `firestore.rules`, lalu klik **Publish**. Rules mengizinkan publik membaca postingan, tetapi hanya akun admin terverifikasi yang dapat menulis atau menghapus.
+7. Commit dan push `firebase-config.js` yang sudah diisi ke branch `main`. GitHub Actions akan menerbitkan pembaruan website.
+8. Buka `https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin.html`, login dengan `hendrakurniawanto@gmail.com`, dan izinkan pop-up Google. Postingan CTR awal akan otomatis dimasukkan ke Firestore bila koleksi masih kosong.
+
+Jangan pernah membagikan password atau token login. Jangan mengganti Firestore Rules menjadi akses publik tanpa pembatasan tulis. Paket gratis Firebase memiliki kuota dan ketentuan penggunaan yang dapat berubah.
 
 ## Terbit online gratis dengan GitHub Pages
 

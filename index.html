@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
+    <script type="module" src="app.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -20,7 +20,7 @@
         <a href="#tentang">Tentang</a>
       </nav>
       <div class="header-actions">
-        <button class="admin-open" id="admin-open" type="button" hidden>Kelola <span aria-hidden="true">↗</span></button>
+        <a class="admin-open" href="admin.html">Admin <span aria-hidden="true">↗</span></a>
         <a class="header-link" href="#tutorial">Mulai belajar <span aria-hidden="true">↘</span></a>
       </div>
     </header>
@@ -87,39 +87,5 @@
       <div id="dialog-content"></div>
     </dialog>
 
-    <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-title">
-      <div class="admin-header">
-        <div>
-          <p class="eyebrow">DASHBOARD LOKAL</p>
-          <h2 id="admin-title">Kelola postingan</h2>
-        </div>
-        <button class="dialog-close admin-close" type="button" aria-label="Tutup panel admin">×</button>
-      </div>
-      <p class="admin-notice">Perubahan tersimpan di browser ini saja. Situs statis ini belum memakai login atau database bersama.</p>
-      <form class="post-form" id="post-form">
-        <input id="post-id" type="hidden">
-        <label>Judul<input id="post-title" name="title" required maxlength="100"></label>
-        <div class="form-row">
-          <label>Kategori
-            <select id="post-category" name="category">
-              <option>Game</option><option>Web</option><option>Teknologi</option><option>Produktivitas</option>
-            </select>
-          </label>
-          <label>Waktu baca<input id="post-read-time" name="readTime" value="5 MENIT" required maxlength="20"></label>
-        </div>
-        <label>Ringkasan<textarea id="post-description" name="description" required rows="2" maxlength="220"></textarea></label>
-        <label>URL gambar<input id="post-image" name="image" type="url" placeholder="https://..." required></label>
-        <label>Teks alternatif gambar<input id="post-alt" name="alt" required maxlength="140"></label>
-        <label>Isi postingan<textarea id="post-body" name="body" required rows="6" placeholder="Tulis isi tutorial di sini..."></textarea></label>
-        <div class="form-actions">
-          <button class="button button-dark" id="post-save" type="submit">Tambah postingan</button>
-          <button class="button button-light" id="post-cancel" type="button" hidden>Batal edit</button>
-        </div>
-      </form>
-      <section class="admin-posts" aria-labelledby="admin-posts-title">
-        <h3 id="admin-posts-title">Postingan saat ini <span id="admin-post-count"></span></h3>
-        <div id="admin-post-list"></div>
-      </section>
-    </dialog>
   </body>
 </html>

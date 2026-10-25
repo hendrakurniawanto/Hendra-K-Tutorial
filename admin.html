@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f3ed">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin — HENDRA K</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="admin.js"></script>
+  </head>
+  <body class="admin-page">
+    <header class="site-header">
+      <a class="wordmark" href="index.html">HENDRA <span>K.</span></a>
+      <a class="header-link" href="index.html">Lihat website <span aria-hidden="true">↗</span></a>
+    </header>
+    <main class="admin-shell">
+      <section class="login-panel" id="login-panel" aria-labelledby="login-title">
+        <p class="eyebrow">AREA ADMIN</p>
+        <h1 id="login-title">Masuk ke<br>ruang kelola<span>.</span></h1>
+        <p class="login-copy">Login dengan akun Google admin untuk mengelola postingan HENDRA K.</p>
+        <button class="google-login" id="google-login" type="button"><span class="google-mark" aria-hidden="true">G</span>Masuk dengan Google</button>
+        <p class="admin-message" id="login-message" role="status"></p>
+      </section>
+      <section class="dashboard" id="dashboard" hidden>
+        <div class="dashboard-heading">
+          <div>
+            <p class="eyebrow">DASHBOARD ADMIN</p>
+            <h1>Kelola postingan<span>.</span></h1>
+            <p class="signed-in" id="signed-in-email"></p>
+          </div>
+          <button class="sign-out" id="sign-out" type="button">Keluar</button>
+        </div>
+        <p class="admin-message" id="dashboard-message" role="status"></p>
+        <form class="post-form" id="post-form">
+          <input id="post-id" type="hidden">
+          <label>Judul<input id="post-title" name="title" required maxlength="100"></label>
+          <div class="form-row">
+            <label>Kategori<select id="post-category" name="category"><option>Game</option><option>Web</option><option>Teknologi</option><option>Produktivitas</option></select></label>
+            <label>Waktu baca<input id="post-read-time" name="readTime" value="5 MENIT" required maxlength="20"></label>
+          </div>
+          <label>Ringkasan<textarea id="post-description" name="description" required rows="2" maxlength="220"></textarea></label>
+          <label>URL gambar<input id="post-image" name="image" type="url" placeholder="https://..." required></label>
+          <label>Teks alternatif gambar<input id="post-alt" name="alt" required maxlength="140"></label>
+          <label>Isi postingan<textarea id="post-body" name="body" required rows="7" placeholder="Tulis isi tutorial di sini..."></textarea></label>
+          <div class="form-actions">
+            <button class="button button-dark" id="post-save" type="submit">Tambah postingan</button>
+            <button class="button button-light" id="post-cancel" type="button" hidden>Batal edit</button>
+          </div>
+        </form>
+        <section class="admin-posts" aria-labelledby="posts-title">
+          <h2 id="posts-title">Postingan saat ini <span id="admin-post-count"></span></h2>
+          <div id="admin-post-list"></div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
