@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
@@ -48,6 +48,7 @@ if (requireConfiguredFirebase()) {
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     database = getFirestore(app);
+    getRedirectResult(auth).catch((error) => showMessage(loginMessage, getErrorMessage(error), true));
   } catch (error) {
     googleLogin.disabled = true;
     showMessage(loginMessage, getErrorMessage(error), true);
@@ -121,7 +122,7 @@ googleLogin.addEventListener("click", async () => {
   try {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithPopup(auth, provider);
+    await signInWithRedirect(auth, provider);
   } catch (error) {
     showMessage(loginMessage, getErrorMessage(error), true);
   } finally {
