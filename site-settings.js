@@ -2,6 +2,8 @@ export const defaultSiteSettings = {
   pageTitle: "HENDRA K — Belajar, Bikin, Bagikan",
   metaDescription: "Tutorial praktis seputar web, teknologi, dan produktivitas dari Hendra K. Belajar hal baru, satu langkah setiap kali.",
   brandName: "HENDRA K.",
+  heroImage: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1300&q=85",
+  heroImageAlt: "Laptop terbuka di meja kerja dengan kode di layar",
   heroEyebrow: "CATATAN BELAJAR HENDRA",
   heroTitleLine1: "Belajar.",
   heroTitleAccent: "Bikin.",

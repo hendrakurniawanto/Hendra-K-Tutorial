@@ -98,6 +98,34 @@ function fillSettingsForm(settings) {
   for (const [key, value] of Object.entries(defaultSiteSettings)) {
     settingsForm.elements.namedItem(key).value = settings[key] ?? value;
   }
+  updateSettingsImagePreview(settings.heroImage ?? defaultSiteSettings.heroImage, settings.heroImageAlt ?? defaultSiteSettings.heroImageAlt);
+}
+
+function updateSettingsImagePreview(url, altText) {
+  const preview = document.querySelector("#settings-image-preview");
+  preview.src = url;
+  preview.alt = altText || "Pratinjau gambar utama website";
+}
+
+settingsForm.elements.namedItem("heroImage").addEventListener("input", (event) => {
+  updateSettingsImagePreview(event.target.value, settingsForm.elements.namedItem("heroImageAlt").value);
+});
+settingsForm.elements.namedItem("heroImageAlt").addEventListener("input", (event) => {
+  updateSettingsImagePreview(settingsForm.elements.namedItem("heroImage").value, event.target.value);
+});
+document.querySelector("#settings-image-preview").addEventListener("error", (event) => {
+  event.currentTarget.classList.add("is-broken");
+});
+document.querySelector("#settings-image-preview").addEventListener("load", (event) => {
+  event.currentTarget.classList.remove("is-broken");
+});
+
+function isHttpsUrl(value) {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 async function loadSiteSettings() {
@@ -116,6 +144,11 @@ settingsForm.addEventListener("submit", async (event) => {
   const updatedSettings = Object.fromEntries(
     Object.keys(defaultSiteSettings).map((key) => [key, settingsForm.elements.namedItem(key).value.trim()])
   );
+  if (!isHttpsUrl(updatedSettings.heroImage)) {
+    showMessage(dashboardMessage, "URL gambar harus diawali https://.", true);
+    submit.disabled = false;
+    return;
+  }
 
   try {
     await setDoc(doc(database, "settings", "site"), updatedSettings);

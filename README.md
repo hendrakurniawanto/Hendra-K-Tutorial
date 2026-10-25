@@ -12,6 +12,8 @@ Buka [halaman admin](https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin
 
 Di dashboard yang sama, bagian **Pengaturan website** dapat mengubah judul tab dan deskripsi mesin pencari, nama brand, judul/teks pembuka, judul bagian tutorial, serta teks profil Tentang. Simpan perubahan untuk menerapkannya kepada semua pengunjung. Tombol **Isi default** mengisi ulang nilai awal ke formulir; tekan **Simpan tampilan** untuk benar-benar menerapkannya.
 
+Gambar utama juga dapat diganti dari kolom **URL gambar utama** dengan alamat gambar HTTPS langsung (misalnya URL berakhiran `.jpg`, `.png`, atau URL gambar CDN). Pratinjau tampil di dashboard sebelum disimpan. Gambar untuk tiap postingan bisa diubah dari kolom URL gambar pada form postingan.
+
 Setiap kartu, gambar, dan judul postingan membuka halaman artikel tersendiri. Untuk menampilkan judul yang bisa diklik, tulis format `[Teks yang tampil](https://alamat-link)` di isi postingan, misalnya `[Baca panduan resmi](https://example.com/panduan)`. URL polos `https://...` tetap didukung. URL YouTube akan menampilkan thumbnail preview; klik preview untuk membuka videonya di YouTube.
 
 Jangan pernah membagikan password atau token login. Jangan mengganti Firestore Rules menjadi akses publik tanpa pembatasan tulis. Paket gratis Firebase memiliki kuota dan ketentuan penggunaan yang dapat berubah.

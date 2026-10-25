@@ -139,6 +139,9 @@ h1, h2, p { margin-top: 0; }
 .settings-heading .eyebrow { margin-bottom: 7px; }
 .settings-heading h2 { margin: 0; font: 600 20px var(--display); }
 .settings-form { gap: 12px; }
+.settings-image-preview { width: min(100%, 420px); aspect-ratio: 16 / 9; overflow: hidden; background: #e6e4da; }
+.settings-image-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.settings-image-preview img.is-broken { visibility: hidden; }
 .settings-form .form-actions { padding-top: 4px; }
 .settings-form .button { min-height: 42px; border: 0; cursor: pointer; }
 .admin-post-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }

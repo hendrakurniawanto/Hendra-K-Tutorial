@@ -64,6 +64,14 @@ function applySiteSettings(settings) {
   const merged = { ...defaultSiteSettings, ...settings };
   document.title = merged.pageTitle;
   document.querySelector('meta[name="description"]').content = merged.metaDescription;
+  const heroImage = document.querySelector("#hero-image");
+  try {
+    const imageUrl = new URL(merged.heroImage);
+    if (imageUrl.protocol === "https:") heroImage.src = imageUrl.href;
+  } catch {
+    heroImage.src = defaultSiteSettings.heroImage;
+  }
+  heroImage.alt = merged.heroImageAlt || defaultSiteSettings.heroImageAlt;
   document.querySelector("#site-brand").textContent = merged.brandName;
   document.querySelector("#footer-brand").textContent = merged.brandName;
   document.querySelector("#site-brand").setAttribute("aria-label", `${merged.brandName}, beranda`);

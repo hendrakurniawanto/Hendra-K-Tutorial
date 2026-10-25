@@ -46,6 +46,9 @@
             <label>Judul tab browser<input id="setting-page-title" name="pageTitle" required maxlength="90"></label>
             <label>Deskripsi halaman untuk mesin pencari<textarea id="setting-meta-description" name="metaDescription" required rows="2" maxlength="180"></textarea></label>
             <label>Nama brand<input id="setting-brand-name" name="brandName" required maxlength="40"></label>
+            <label>URL gambar utama (HTTPS)<input id="setting-hero-image" name="heroImage" type="url" pattern="https://.*" placeholder="https://contoh.com/gambar.jpg" required></label>
+            <label>Teks alternatif gambar<input id="setting-hero-image-alt" name="heroImageAlt" required maxlength="140"></label>
+            <div class="settings-image-preview"><img id="settings-image-preview" alt="Pratinjau gambar utama website"></div>
             <div class="form-row">
               <label>Teks kecil di atas judul<input id="setting-hero-eyebrow" name="heroEyebrow" required maxlength="60"></label>
               <label>Teks tombol pembuka<input id="setting-hero-button" name="heroButtonLabel" required maxlength="40"></label>
