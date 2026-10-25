@@ -1,21 +1,14 @@
 # HENDRA K
 
-Website statis untuk berbagi tutorial. Tidak memerlukan server backend, database, atau biaya hosting. Buka `index.html` untuk melihat situs secara lokal.
+Website publik memakai GitHub Pages; login admin dan penyimpanan postingan memakai Firebase. Buka `index.html` untuk melihat situs secara lokal.
 
 ## Login admin dan database postingan
 
 Admin ada di `/admin.html`. Login memakai Google, lalu Firebase Authentication dan Firestore membatasi perubahan postingan ke email terverifikasi `hendrakurniawanto@gmail.com`. Pengunjung website membaca postingan dari koleksi Firestore `posts`.
 
-### Setup Firebase satu kali
+Firebase sudah disiapkan pada project `hendra-k-tutorial`: Google Sign-In aktif, domain GitHub Pages diizinkan, Firestore berada di region Jakarta, dan Rules membatasi penulisan ke akun admin terverifikasi. Konfigurasi aplikasi web ada di `firebase-config.js`; API key Firebase web bukan password, sementara keamanan tulis ditegakkan oleh Rules.
 
-1. Buat project gratis di [Firebase Console](https://console.firebase.google.com/) atau pilih project yang sudah ada.
-2. Tambahkan aplikasi Web di Project settings → General → Your apps. Salin konfigurasi web ke `firebase-config.js`, mengganti setiap nilai `ISI_DARI_FIREBASE_CONSOLE`. Nilai konfigurasi web Firebase memang tersedia di frontend; keamanan tulis dijaga oleh Firestore Rules, bukan dengan menyembunyikan config.
-3. Di Authentication → Sign-in method, aktifkan **Google**.
-4. Di Authentication → Settings → Authorized domains, tambahkan `hendrakurniawanto.github.io`.
-5. Buat database di Firestore Database. Pilih lokasi yang dekat dengan mayoritas pengunjung.
-6. Buka Firestore Database → Rules, tempel isi file `firestore.rules`, lalu klik **Publish**. Rules mengizinkan publik membaca postingan, tetapi hanya akun admin terverifikasi yang dapat menulis atau menghapus.
-7. Commit dan push `firebase-config.js` yang sudah diisi ke branch `main`. GitHub Actions akan menerbitkan pembaruan website.
-8. Buka `https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin.html`, login dengan `hendrakurniawanto@gmail.com`, dan izinkan pop-up Google. Postingan CTR awal akan otomatis dimasukkan ke Firestore bila koleksi masih kosong.
+Buka [halaman admin](https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin.html), masuk dengan akun Google `hendrakurniawanto@gmail.com`, lalu izinkan pop-up Google. Postingan CTR awal otomatis dimasukkan ke koleksi `posts` bila koleksi masih kosong. Postingan yang ditambah, diedit, atau dihapus akan tersimpan di Firestore dan terlihat di situs publik.
 
 Jangan pernah membagikan password atau token login. Jangan mengganti Firestore Rules menjadi akses publik tanpa pembatasan tulis. Paket gratis Firebase memiliki kuota dan ketentuan penggunaan yang dapat berubah.
 
@@ -41,8 +34,4 @@ GitHub Pages menyajikan website statis dari repository publik tanpa server yang 
 
 Tidak perlu membeli domain atau menyiapkan server. Kuota dan kebijakan gratis mengikuti ketentuan GitHub. Gambar dan font eksternal memerlukan koneksi internet.
 
-Alternatif drag-and-drop: buka [Netlify Drop](https://app.netlify.com/drop), masuk ke akun gratis, lalu unggah file website. Untuk pembaruan yang tersinkron dari beberapa perangkat, gunakan workflow GitHub Pages di atas.
-
-## Alternatif gratis: GitHub Pages
-
-Unggah file situs ke repository GitHub publik, lalu buka **Settings → Pages**, pilih sumber deploy dari branch utama dan folder root, kemudian simpan. GitHub akan memberi alamat `username.github.io/nama-repository` setelah proses publikasi selesai.
+Hosting GitHub Pages gratis mengikuti kuota dan kebijakan GitHub. Gambar dan font eksternal memerlukan koneksi internet.
