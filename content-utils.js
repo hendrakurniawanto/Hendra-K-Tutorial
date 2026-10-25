@@ -17,7 +17,7 @@ function getYouTubeVideoId(url) {
   }
 }
 
-function renderLink(url) {
+function renderLink(url, label = "") {
   const safeUrl = escapeHtml(url);
   const restrictedDownloads = new Set([
     "https://pastelink.net/q7emda9i",
@@ -29,7 +29,8 @@ function renderLink(url) {
 
   const videoId = getYouTubeVideoId(url);
   if (!videoId) {
-    return `<a class="article-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}<span aria-hidden="true"> ↗</span></a>`;
+    const linkText = label ? escapeHtml(label) : safeUrl;
+    return `<a class="article-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${linkText}<span aria-hidden="true"> ↗</span></a>`;
   }
 
   const videoUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
@@ -37,7 +38,7 @@ function renderLink(url) {
   return `<a class="youtube-preview" href="${videoUrl}" target="_blank" rel="noopener noreferrer" aria-label="Tonton video di YouTube">
     <img src="${thumbnail}" alt="Preview video YouTube" loading="lazy">
     <span class="youtube-play" aria-hidden="true">▶</span>
-    <span class="youtube-caption"><span>VIDEO YOUTUBE</span><strong>Buka video di YouTube ↗</strong></span>
+    <span class="youtube-caption"><span>VIDEO YOUTUBE</span><strong>${escapeHtml(label || "Buka video di YouTube")} ↗</strong></span>
   </a>`;
 }
 
@@ -45,16 +46,17 @@ export function renderLinkedText(value) {
   const lines = String(value ?? "").split("\n");
   return lines.map((line) => {
     const parts = [];
-    const urlPattern = /https?:\/\/[^\s<>"']+/gi;
+    const urlPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|https?:\/\/[^\s<>"']+/gi;
     let cursor = 0;
     for (const match of line.matchAll(urlPattern)) {
       const start = match.index;
-      let url = match[0];
+      const label = match[1] || "";
+      let url = match[2] || match[0];
       const punctuation = url.match(/[),.!?;:\]]+$/)?.[0] || "";
       if (punctuation) url = url.slice(0, -punctuation.length);
       if (!url) continue;
       parts.push(escapeHtml(line.slice(cursor, start)));
-      parts.push(renderLink(url));
+      parts.push(renderLink(url, label));
       parts.push(escapeHtml(punctuation));
       cursor = start + match[0].length;
     }

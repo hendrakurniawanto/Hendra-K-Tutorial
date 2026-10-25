@@ -122,6 +122,7 @@ h1, h2, p { margin-top: 0; }
 .admin-notice { margin: 18px 0 23px; padding: 12px 14px; border-left: 3px solid var(--red); background: #ebe9df; color: #565b52; font-size: 11px; line-height: 1.6; }
 .post-form { display: grid; gap: 14px; }
 .post-form label { display: grid; gap: 6px; color: var(--muted); font: 10px var(--mono); }
+.field-hint { color: var(--muted); font: 10px/1.6 var(--sans); }
 .post-form input, .post-form textarea, .post-form select { width: 100%; min-height: 39px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 0; outline: 0; background: #fbfaf6; color: var(--ink); font: 12px var(--sans); }
 .post-form textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
 .post-form input:focus, .post-form textarea:focus, .post-form select:focus { border-color: var(--ink); }
