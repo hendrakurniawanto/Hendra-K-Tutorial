@@ -38,6 +38,17 @@ function renderPost(post) {
     <div class="article-content">${content}</div>
     <div class="article-end"><span>✳</span> TETAP BELAJAR, TETAP BERBAGI.</div>
   `;
+  const restrictedDownloads = new Set([
+    "https://pastelink.net/q7emda9i",
+    "https://pastelink.net/6oet3337"
+  ]);
+  articleElement.querySelectorAll("a[href]").forEach((link) => {
+    if (!restrictedDownloads.has(link.href.replace(/\/$/, ""))) return;
+    const replacement = document.createElement("span");
+    replacement.className = "article-link-disabled";
+    replacement.textContent = "Tautan unduhan ini tidak ditampilkan.";
+    link.replaceWith(replacement);
+  });
   articleElement.hidden = false;
   loading.hidden = true;
 }
