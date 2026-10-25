@@ -18,6 +18,7 @@ let database;
 let posts = [];
 let siteSettings = { ...defaultSiteSettings };
 let activeAdminUid = "";
+let signInInProgress = false;
 const redirectAttemptKey = "hendra-k-admin-redirect-pending";
 
 function escapeHtml(value) {
@@ -62,9 +63,11 @@ if (requireConfiguredFirebase()) {
       const returnedFromRedirect = sessionStorage.getItem(redirectAttemptKey) === "1";
       sessionStorage.removeItem(redirectAttemptKey);
       if (result?.user) {
+        signInInProgress = false;
         showMessage(loginMessage, "Login berhasil. Membuka dashboard admin...");
         handleAuthenticatedUser(result.user);
       } else if (returnedFromRedirect && !auth.currentUser) {
+        signInInProgress = false;
         showMessage(loginMessage, "Google mengembalikan ke website tanpa sesi login. Coba lagi, dan pilih akun admin yang sama.", true);
       }
     }).catch((error) => {
@@ -153,6 +156,7 @@ function resetForm() {
 
 function handleAuthenticatedUser(user) {
   if (!user) {
+    if (signInInProgress || sessionStorage.getItem(redirectAttemptKey) === "1") return;
     activeAdminUid = "";
     loginPanel.hidden = false;
     dashboard.hidden = true;
@@ -186,6 +190,7 @@ if (auth) {
 
 googleLogin.addEventListener("click", async () => {
   if (!auth) return;
+  signInInProgress = true;
   googleLogin.disabled = true;
   showMessage(loginMessage, "Menghubungkan ke Google...");
   try {
@@ -193,14 +198,20 @@ googleLogin.addEventListener("click", async () => {
     provider.setCustomParameters({ prompt: "select_account" });
     try {
       const result = await signInWithPopup(auth, provider);
+      signInInProgress = false;
       handleAuthenticatedUser(result.user);
     } catch (error) {
-      if (error.code !== "auth/popup-blocked") throw error;
+      if (error.code !== "auth/popup-blocked") {
+        signInInProgress = false;
+        throw error;
+      }
       showMessage(loginMessage, "Popup diblokir browser. Melanjutkan login dengan redirect...");
       sessionStorage.setItem(redirectAttemptKey, "1");
       await signInWithRedirect(auth, provider);
     }
   } catch (error) {
+    signInInProgress = false;
+    sessionStorage.removeItem(redirectAttemptKey);
     showMessage(loginMessage, getErrorMessage(error), true);
   } finally {
     googleLogin.disabled = false;
