@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f3ed">
+    <meta name="description" content="Tutorial praktis seputar web, teknologi, dan produktivitas dari Hendra K. Belajar hal baru, satu langkah setiap kali.">
+    <title>HENDRA K — Belajar, Bikin, Bagikan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="#beranda" aria-label="HENDRA K, beranda">HENDRA <span>K.</span></a>
+      <nav class="main-nav" aria-label="Navigasi utama">
+        <a href="#tutorial">Tutorial</a>
+        <a href="#tentang">Tentang</a>
+      </nav>
+      <div class="header-actions">
+        <button class="admin-open" id="admin-open" type="button">Kelola <span aria-hidden="true">↗</span></button>
+        <a class="header-link" href="#tutorial">Mulai belajar <span aria-hidden="true">↘</span></a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="beranda" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span> CATATAN BELAJAR HENDRA</p>
+          <h1 id="hero-title">Belajar.<br><span>Bikin.</span> Bagikan.</h1>
+          <p class="hero-intro">Tutorial praktis soal web, teknologi, dan hal-hal digital. Dibuat sederhana supaya kamu bisa langsung mencoba.</p>
+          <a class="button button-dark" href="#tutorial">Jelajahi tutorial <span aria-hidden="true">↓</span></a>
+          <div class="hero-footnote"><span>01 / BELAJAR TANPA RIBET</span><span>DARI HENDRA K.</span></div>
+        </div>
+        <div class="hero-art" aria-label="Suasana meja kerja dengan laptop dan catatan" role="img">
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1300&q=85" alt="Laptop terbuka di meja kerja dengan kode di layar">
+          <div class="art-label"><span class="art-label-mark">HK</span><span>RUANG KERJA<br>IDE JADI NYATA</span><span class="art-arrow" aria-hidden="true">↗</span></div>
+          <span class="art-index">EST. 2024&nbsp; / &nbsp;INDONESIA</span>
+        </div>
+        <div class="hero-ticker" aria-hidden="true"><span>CATATAN DIGITAL</span><span>✳</span><span>LANGKAH KECIL, HASIL NYATA</span><span>✳</span><span>CATATAN DIGITAL</span><span>✳</span></div>
+      </section>
+
+      <section class="tutorial-section" id="tutorial" aria-labelledby="tutorial-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CATATAN DAN PANDUAN PRAKTIS</p>
+            <h2 id="tutorial-title">Ruang belajar<span>.</span></h2>
+          </div>
+          <p class="section-aside">Panduan yang ringkas.<br>Praktik yang bisa langsung dicoba.</p>
+        </div>
+
+        <div class="library-tools">
+          <span class="library-label">POSTINGAN TERBARU</span>
+          <label class="search-box">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <span class="visually-hidden">Cari tutorial</span>
+            <input id="tutorial-search" type="search" placeholder="Cari tutorial..." autocomplete="off">
+            <kbd>/</kbd>
+          </label>
+        </div>
+
+        <div class="results-meta"><span id="results-count" aria-live="polite">06 TUTORIAL</span><span>DIKURASI OLEH HENDRA</span></div>
+        <div class="tutorial-grid" id="tutorial-grid"></div>
+        <p class="empty-state" id="empty-state" hidden>Tidak ada tutorial yang cocok. Coba kata kunci atau kategori lain.</p>
+      </section>
+
+      <section class="about-band" id="tentang" aria-labelledby="about-title">
+        <div class="about-stamp" aria-hidden="true">HK<br><span>✳</span></div>
+        <div class="about-copy">
+          <p class="eyebrow">SEDIKIT TENTANG SAYA</p>
+          <h2 id="about-title">Hai, aku Hendra.<br><span>Suka berbagi yang kupelajari.</span></h2>
+        </div>
+        <p class="about-note">Tempat ini jadi catatan terbuka untuk hal-hal digital yang pernah kucoba. Semoga ada satu ide kecil yang berguna buat proyekmu berikutnya.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="wordmark footer-mark" href="#beranda">HENDRA <span>K.</span></a>
+      <p>Dibuat dengan rasa ingin tahu <span aria-hidden="true">✳</span> 2026</p>
+      <a href="#beranda">Kembali ke atas ↑</a>
+    </footer>
+
+    <dialog class="article-dialog" id="article-dialog" aria-labelledby="dialog-title">
+      <button class="dialog-close" type="button" aria-label="Tutup artikel">×</button>
+      <div id="dialog-content"></div>
+    </dialog>
+
+    <dialog class="admin-dialog" id="admin-dialog" aria-labelledby="admin-title">
+      <div class="admin-header">
+        <div>
+          <p class="eyebrow">DASHBOARD LOKAL</p>
+          <h2 id="admin-title">Kelola postingan</h2>
+        </div>
+        <button class="dialog-close admin-close" type="button" aria-label="Tutup panel admin">×</button>
+      </div>
+      <p class="admin-notice">Perubahan tersimpan di browser ini saja. Situs statis ini belum memakai login atau database bersama.</p>
+      <form class="post-form" id="post-form">
+        <input id="post-id" type="hidden">
+        <label>Judul<input id="post-title" name="title" required maxlength="100"></label>
+        <div class="form-row">
+          <label>Kategori
+            <select id="post-category" name="category">
+              <option>Game</option><option>Web</option><option>Teknologi</option><option>Produktivitas</option>
+            </select>
+          </label>
+          <label>Waktu baca<input id="post-read-time" name="readTime" value="5 MENIT" required maxlength="20"></label>
+        </div>
+        <label>Ringkasan<textarea id="post-description" name="description" required rows="2" maxlength="220"></textarea></label>
+        <label>URL gambar<input id="post-image" name="image" type="url" placeholder="https://..." required></label>
+        <label>Teks alternatif gambar<input id="post-alt" name="alt" required maxlength="140"></label>
+        <label>Isi postingan<textarea id="post-body" name="body" required rows="6" placeholder="Tulis isi tutorial di sini..."></textarea></label>
+        <div class="form-actions">
+          <button class="button button-dark" id="post-save" type="submit">Tambah postingan</button>
+          <button class="button button-light" id="post-cancel" type="button" hidden>Batal edit</button>
+        </div>
+      </form>
+      <section class="admin-posts" aria-labelledby="admin-posts-title">
+        <h3 id="admin-posts-title">Postingan saat ini <span id="admin-post-count"></span></h3>
+        <div id="admin-post-list"></div>
+      </section>
+    </dialog>
+  </body>
+</html>
