@@ -39,8 +39,10 @@ const emptyState = document.querySelector("#empty-state");
 const dialog = document.querySelector("#article-dialog");
 const dialogContent = document.querySelector("#dialog-content");
 const adminDialog = document.querySelector("#admin-dialog");
+const adminOpen = document.querySelector("#admin-open");
 const postForm = document.querySelector("#post-form");
 const adminPostList = document.querySelector("#admin-post-list");
+adminOpen.hidden = new URLSearchParams(window.location.search).get("admin") !== "1";
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -140,7 +142,7 @@ function resetPostForm() {
   document.querySelector("#post-cancel").hidden = true;
 }
 
-document.querySelector("#admin-open").addEventListener("click", () => {
+adminOpen.addEventListener("click", () => {
   renderAdminPosts();
   adminDialog.showModal();
 });
