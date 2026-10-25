@@ -247,6 +247,7 @@ h1, h2, p { margin-top: 0; }
 .article-content-section li { padding-left: 4px; }
 .article-link { color: #a43d2d; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .article-link:hover { color: var(--ink); }
+.article-link-disabled { color: var(--muted); font-size: .92em; font-style: italic; }
 .youtube-preview { position: relative; display: block; max-width: 620px; margin: 20px 0; overflow: hidden; background: #20231f; color: white; }
 .youtube-preview img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; opacity: .88; transition: opacity .2s, transform .3s; }
 .youtube-preview:hover img { opacity: 1; transform: scale(1.015); }

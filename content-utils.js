@@ -19,6 +19,14 @@ function getYouTubeVideoId(url) {
 
 function renderLink(url) {
   const safeUrl = escapeHtml(url);
+  const restrictedDownloads = new Set([
+    "https://pastelink.net/q7emda9i",
+    "https://pastelink.net/6oet3337"
+  ]);
+  if (restrictedDownloads.has(url.replace(/\/$/, ""))) {
+    return '<span class="article-link-disabled">Tautan unduhan ini tidak ditampilkan.</span>';
+  }
+
   const videoId = getYouTubeVideoId(url);
   if (!videoId) {
     return `<a class="article-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}<span aria-hidden="true"> ↗</span></a>`;
