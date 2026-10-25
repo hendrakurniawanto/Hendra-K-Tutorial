@@ -42,7 +42,12 @@ const adminDialog = document.querySelector("#admin-dialog");
 const adminOpen = document.querySelector("#admin-open");
 const postForm = document.querySelector("#post-form");
 const adminPostList = document.querySelector("#admin-post-list");
-adminOpen.hidden = new URLSearchParams(window.location.search).get("admin") !== "1";
+function updateAdminVisibility() {
+  adminOpen.hidden = new URLSearchParams(window.location.search).get("admin") !== "1";
+}
+
+updateAdminVisibility();
+window.addEventListener("pageshow", updateAdminVisibility);
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
