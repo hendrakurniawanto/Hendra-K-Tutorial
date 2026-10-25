@@ -8,7 +8,7 @@ Admin ada di `/admin.html`. Login memakai Google, lalu Firebase Authentication d
 
 Firebase sudah disiapkan pada project `hendra-k-tutorial`: Google Sign-In aktif, domain GitHub Pages diizinkan, Firestore berada di region Jakarta, dan Rules membatasi penulisan ke akun admin terverifikasi. Konfigurasi aplikasi web ada di `firebase-config.js`; API key Firebase web bukan password, sementara keamanan tulis ditegakkan oleh Rules.
 
-Buka [halaman admin](https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin.html), masuk dengan akun Google `hendrakurniawanto@gmail.com`, lalu izinkan pop-up Google. Postingan CTR awal otomatis dimasukkan ke koleksi `posts` bila koleksi masih kosong. Postingan yang ditambah, diedit, atau dihapus akan tersimpan di Firestore dan terlihat di situs publik.
+Buka [halaman admin](https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin.html), masuk dengan akun Google `hendrakurniawanto@gmail.com`, lalu izinkan pop-up untuk situs jika browser memintanya. Login mencoba popup lebih dulu dan memakai redirect jika popup diblokir. Postingan CTR awal otomatis dimasukkan ke koleksi `posts` bila koleksi masih kosong. Postingan yang ditambah, diedit, atau dihapus akan tersimpan di Firestore dan terlihat di situs publik.
 
 Di dashboard yang sama, bagian **Pengaturan website** dapat mengubah judul tab dan deskripsi mesin pencari, nama brand, judul/teks pembuka, judul bagian tutorial, serta teks profil Tentang. Simpan perubahan untuk menerapkannya kepada semua pengunjung. Tombol **Isi default** mengisi ulang nilai awal ke formulir; tekan **Simpan tampilan** untuk benar-benar menerapkannya.
 

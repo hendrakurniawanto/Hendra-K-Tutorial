@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
@@ -33,6 +33,11 @@ function getErrorMessage(error) {
   const messages = {
     "auth/unauthorized-domain": "Domain website belum diizinkan di Firebase Authentication.",
     "auth/popup-closed-by-user": "Jendela login ditutup sebelum proses selesai.",
+    "auth/popup-blocked": "Popup login diblokir browser. Izinkan popup untuk website ini lalu coba lagi.",
+    "auth/cancelled-popup-request": "Permintaan login lain sedang berjalan. Tunggu sebentar lalu coba lagi.",
+    "auth/network-request-failed": "Koneksi login Google gagal. Periksa koneksi internet lalu coba lagi.",
+    "auth/operation-not-allowed": "Login Google belum diaktifkan pada Firebase Authentication.",
+    "auth/invalid-credential": "Login Google tidak berhasil. Pilih akun admin yang benar lalu coba lagi.",
     "permission-denied": "Akses ditolak Firestore. Pastikan Firestore Rules dan email admin sudah benar.",
     "unavailable": "Firebase tidak dapat dijangkau. Periksa koneksi internet."
   };
@@ -51,7 +56,9 @@ if (requireConfiguredFirebase()) {
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     database = getFirestore(app);
-    getRedirectResult(auth).catch((error) => showMessage(loginMessage, getErrorMessage(error), true));
+    getRedirectResult(auth).then((result) => {
+      if (result?.user) showMessage(loginMessage, "Login berhasil. Membuka dashboard admin...");
+    }).catch((error) => showMessage(loginMessage, getErrorMessage(error), true));
   } catch (error) {
     googleLogin.disabled = true;
     showMessage(loginMessage, getErrorMessage(error), true);
@@ -165,7 +172,13 @@ googleLogin.addEventListener("click", async () => {
   try {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithRedirect(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      if (error.code !== "auth/popup-blocked") throw error;
+      showMessage(loginMessage, "Popup diblokir browser. Melanjutkan login dengan redirect...");
+      await signInWithRedirect(auth, provider);
+    }
   } catch (error) {
     showMessage(loginMessage, getErrorMessage(error), true);
   } finally {
