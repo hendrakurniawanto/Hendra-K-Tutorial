@@ -26,8 +26,6 @@ const grid = document.querySelector("#tutorial-grid");
 const searchInput = document.querySelector("#tutorial-search");
 const resultsCount = document.querySelector("#results-count");
 const emptyState = document.querySelector("#empty-state");
-const dialog = document.querySelector("#article-dialog");
-const dialogContent = document.querySelector("#dialog-content");
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -44,15 +42,15 @@ function renderCards() {
 
   grid.innerHTML = filtered.map((tutorial, index) => `
     <article class="tutorial-card" style="animation-delay:${index * 55}ms">
-      <div class="card-image-wrap">
+      <a class="card-image-wrap" href="article.html?id=${encodeURIComponent(tutorial.id)}" aria-label="Buka ${escapeHtml(tutorial.title)}">
         <img src="${escapeHtml(tutorial.image)}" alt="${escapeHtml(tutorial.alt)}" loading="lazy">
         <span class="card-category">${escapeHtml(tutorial.category).toUpperCase()}</span>
-      </div>
+      </a>
       <div class="card-body">
         <div class="card-meta"><span>${escapeHtml(tutorial.date)}</span><span>${escapeHtml(tutorial.readTime)}</span></div>
-        <h3>${escapeHtml(tutorial.title)}</h3>
+        <h3><a href="article.html?id=${encodeURIComponent(tutorial.id)}">${escapeHtml(tutorial.title)}</a></h3>
         <p>${escapeHtml(tutorial.description)}</p>
-        <button class="read-link" type="button" data-article="${escapeHtml(tutorial.id)}">Baca tutorial <span aria-hidden="true">↗</span></button>
+        <a class="read-link" href="article.html?id=${encodeURIComponent(tutorial.id)}">Baca tutorial <span aria-hidden="true">↗</span></a>
       </div>
     </article>
   `).join("");
@@ -61,42 +59,9 @@ function renderCards() {
   emptyState.hidden = filtered.length > 0;
 }
 
-function openArticle(articleId) {
-  const tutorial = tutorials.find((item) => item.id === articleId);
-  if (!tutorial) return;
-
-  const content = tutorial.content.map((section) => `
-    <section>
-      <h3>${escapeHtml(section.heading)}</h3>
-      ${section.text ? `<p>${escapeHtml(section.text)}</p>` : ""}
-      ${section.list ? `<ol>${section.list.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>` : ""}
-    </section>
-  `).join("");
-
-  dialogContent.innerHTML = `
-    <img class="dialog-image" src="${escapeHtml(tutorial.image)}" alt="${escapeHtml(tutorial.alt)}">
-    <article class="dialog-article">
-      <p class="eyebrow">${escapeHtml(tutorial.category).toUpperCase()} &nbsp; / &nbsp; ${escapeHtml(tutorial.readTime)}</p>
-      <h2 id="dialog-title">${escapeHtml(tutorial.title)}</h2>
-      <p class="dialog-summary">${escapeHtml(tutorial.description)}</p>
-      ${content}
-      <p class="eyebrow">TETAP BELAJAR, TETAP BERBAGI. &nbsp; — HENDRA K.</p>
-    </article>
-  `;
-  dialog.showModal();
-}
-
 searchInput.addEventListener("input", renderCards);
-grid.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-article]");
-  if (button) openArticle(button.dataset.article);
-});
-document.querySelector(".dialog-close").addEventListener("click", () => dialog.close());
-dialog.addEventListener("click", (event) => {
-  if (event.target === dialog) dialog.close();
-});
 document.addEventListener("keydown", (event) => {
-  if (event.key === "/" && document.activeElement !== searchInput && !dialog.open) {
+  if (event.key === "/" && document.activeElement !== searchInput) {
     event.preventDefault();
     searchInput.focus();
   }

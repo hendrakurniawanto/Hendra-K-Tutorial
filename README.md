@@ -10,6 +10,8 @@ Firebase sudah disiapkan pada project `hendra-k-tutorial`: Google Sign-In aktif,
 
 Buka [halaman admin](https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin.html), masuk dengan akun Google `hendrakurniawanto@gmail.com`, lalu izinkan pop-up Google. Postingan CTR awal otomatis dimasukkan ke koleksi `posts` bila koleksi masih kosong. Postingan yang ditambah, diedit, atau dihapus akan tersimpan di Firestore dan terlihat di situs publik.
 
+Setiap kartu, gambar, dan judul postingan membuka halaman artikel tersendiri. URL `https://...` di isi artikel otomatis menjadi tautan yang bisa dibuka. URL YouTube akan menampilkan thumbnail preview; klik preview untuk membuka videonya di YouTube.
+
 Jangan pernah membagikan password atau token login. Jangan mengganti Firestore Rules menjadi akses publik tanpa pembatasan tulis. Paket gratis Firebase memiliki kuota dan ketentuan penggunaan yang dapat berubah.
 
 ## Terbit online gratis dengan GitHub Pages

@@ -1,0 +1,56 @@
+export function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[character]);
+}
+
+function getYouTubeVideoId(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1).split("/")[0];
+    if (!["youtube.com", "www.youtube.com", "m.youtube.com", "youtube-nocookie.com", "www.youtube-nocookie.com"].includes(parsed.hostname)) return "";
+    if (parsed.pathname === "/watch") return parsed.searchParams.get("v") || "";
+    const match = parsed.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/);
+    return match ? match[1] : "";
+  } catch {
+    return "";
+  }
+}
+
+function renderLink(url) {
+  const safeUrl = escapeHtml(url);
+  const videoId = getYouTubeVideoId(url);
+  if (!videoId) {
+    return `<a class="article-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}<span aria-hidden="true"> ↗</span></a>`;
+  }
+
+  const videoUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+  const thumbnail = `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
+  return `<a class="youtube-preview" href="${videoUrl}" target="_blank" rel="noopener noreferrer" aria-label="Tonton video di YouTube">
+    <img src="${thumbnail}" alt="Preview video YouTube" loading="lazy">
+    <span class="youtube-play" aria-hidden="true">▶</span>
+    <span class="youtube-caption"><span>VIDEO YOUTUBE</span><strong>Buka video di YouTube ↗</strong></span>
+  </a>`;
+}
+
+export function renderLinkedText(value) {
+  const lines = String(value ?? "").split("\n");
+  return lines.map((line) => {
+    const parts = [];
+    const urlPattern = /https?:\/\/[^\s<>"']+/gi;
+    let cursor = 0;
+    for (const match of line.matchAll(urlPattern)) {
+      const start = match.index;
+      let url = match[0];
+      const punctuation = url.match(/[),.!?;:\]]+$/)?.[0] || "";
+      if (punctuation) url = url.slice(0, -punctuation.length);
+      if (!url) continue;
+      parts.push(escapeHtml(line.slice(cursor, start)));
+      parts.push(renderLink(url));
+      parts.push(escapeHtml(punctuation));
+      cursor = start + match[0].length;
+    }
+    parts.push(escapeHtml(line.slice(cursor)));
+    return parts.join("");
+  }).join("<br>");
+}
