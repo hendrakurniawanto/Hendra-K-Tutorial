@@ -32,6 +32,7 @@ a { color: inherit; text-decoration: none; }
 h1, h2, p { margin-top: 0; }
 .hero h1 { margin: 0 0 23px; font: 600 clamp(58px, 6.2vw, 88px)/.99 var(--display); letter-spacing: 0; }
 .hero h1 span { color: var(--red); }
+.hero h1 #hero-title-line-1, .hero h1 #hero-title-line-2 { color: inherit; }
 .hero-intro { max-width: 385px; margin-bottom: 29px; color: #565b52; font-size: 15px; line-height: 1.8; }
 .button { display: inline-flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 26px; padding: 0 19px; font-size: 12px; font-weight: 700; transition: background .18s, transform .18s; }
 .button:hover { transform: translateY(-2px); }
@@ -132,6 +133,13 @@ h1, h2, p { margin-top: 0; }
 .admin-posts { margin-top: 29px; border-top: 1px solid var(--line); }
 .admin-posts h3 { display: flex; justify-content: space-between; margin: 18px 0 9px; font: 600 15px var(--display); }
 .admin-posts h3 span { color: var(--muted); font: 10px var(--mono); }
+.site-settings-panel { margin: 25px 0 34px; padding: 23px; border: 1px solid var(--line); background: #fbfaf6; }
+.settings-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.settings-heading .eyebrow { margin-bottom: 7px; }
+.settings-heading h2 { margin: 0; font: 600 20px var(--display); }
+.settings-form { gap: 12px; }
+.settings-form .form-actions { padding-top: 4px; }
+.settings-form .button { min-height: 42px; border: 0; cursor: pointer; }
 .admin-post-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
 .admin-post-row > div:first-child { display: grid; gap: 5px; min-width: 0; }
 .admin-post-row strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
@@ -220,6 +228,7 @@ h1, h2, p { margin-top: 0; }
   .login-panel { margin-top: 15px; }
   .dashboard-heading { align-items: start; }
   .dashboard .post-form { padding: 16px; }
+  .site-settings-panel { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

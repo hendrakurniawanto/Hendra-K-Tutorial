@@ -14,7 +14,7 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="wordmark" href="#beranda" aria-label="HENDRA K, beranda">HENDRA <span>K.</span></a>
+      <a class="wordmark" id="site-brand" href="#beranda" aria-label="HENDRA K, beranda">HENDRA <span>K.</span></a>
       <nav class="main-nav" aria-label="Navigasi utama">
         <a href="#tutorial">Tutorial</a>
         <a href="#tentang">Tentang</a>
@@ -28,10 +28,10 @@
     <main>
       <section class="hero" id="beranda" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="status-dot"></span> CATATAN BELAJAR HENDRA</p>
-          <h1 id="hero-title">Belajar.<br><span>Bikin.</span> Bagikan.</h1>
-          <p class="hero-intro">Tutorial praktis soal web, teknologi, dan hal-hal digital. Dibuat sederhana supaya kamu bisa langsung mencoba.</p>
-          <a class="button button-dark" href="#tutorial">Jelajahi tutorial <span aria-hidden="true">↓</span></a>
+          <p class="eyebrow"><span class="status-dot"></span> <span id="hero-eyebrow">CATATAN BELAJAR HENDRA</span></p>
+          <h1 id="hero-title"><span id="hero-title-line-1">Belajar.</span><br><span id="hero-title-accent">Bikin.</span> <span id="hero-title-line-2">Bagikan.</span></h1>
+          <p class="hero-intro" id="hero-description">Tutorial praktis soal web, teknologi, dan hal-hal digital. Dibuat sederhana supaya kamu bisa langsung mencoba.</p>
+          <a class="button button-dark" id="hero-button" href="#tutorial"><span id="hero-button-label">Jelajahi tutorial</span> <span aria-hidden="true">↓</span></a>
           <div class="hero-footnote"><span>01 / BELAJAR TANPA RIBET</span><span>DARI HENDRA K.</span></div>
         </div>
         <div class="hero-art" aria-label="Suasana meja kerja dengan laptop dan catatan" role="img">
@@ -45,10 +45,10 @@
       <section class="tutorial-section" id="tutorial" aria-labelledby="tutorial-title">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">CATATAN DAN PANDUAN PRAKTIS</p>
-            <h2 id="tutorial-title">Ruang belajar<span>.</span></h2>
+            <p class="eyebrow" id="tutorial-eyebrow">CATATAN DAN PANDUAN PRAKTIS</p>
+            <h2><span id="tutorial-title">Ruang belajar</span><span>.</span></h2>
           </div>
-          <p class="section-aside">Panduan yang ringkas.<br>Praktik yang bisa langsung dicoba.</p>
+          <p class="section-aside"><span id="tutorial-aside-line-1">Panduan yang ringkas.</span><br><span id="tutorial-aside-line-2">Praktik yang bisa langsung dicoba.</span></p>
         </div>
 
         <div class="library-tools">
@@ -69,15 +69,15 @@
       <section class="about-band" id="tentang" aria-labelledby="about-title">
         <div class="about-stamp" aria-hidden="true">HK<br><span>✳</span></div>
         <div class="about-copy">
-          <p class="eyebrow">SEDIKIT TENTANG SAYA</p>
-          <h2 id="about-title">Hai, aku Hendra.<br><span>Suka berbagi yang kupelajari.</span></h2>
+          <p class="eyebrow" id="about-eyebrow">SEDIKIT TENTANG SAYA</p>
+          <h2><span id="about-title-line-1">Hai, aku Hendra.</span><br><span id="about-title-line-2">Suka berbagi yang kupelajari.</span></h2>
         </div>
-        <p class="about-note">Tempat ini jadi catatan terbuka untuk hal-hal digital yang pernah kucoba. Semoga ada satu ide kecil yang berguna buat proyekmu berikutnya.</p>
+        <p class="about-note" id="about-description">Tempat ini jadi catatan terbuka untuk hal-hal digital yang pernah kucoba. Semoga ada satu ide kecil yang berguna buat proyekmu berikutnya.</p>
       </section>
     </main>
 
     <footer class="site-footer">
-      <a class="wordmark footer-mark" href="#beranda">HENDRA <span>K.</span></a>
+      <a class="wordmark footer-mark" id="footer-brand" href="#beranda">HENDRA <span>K.</span></a>
       <p>Dibuat dengan rasa ingin tahu <span aria-hidden="true">✳</span> 2026</p>
       <a href="#beranda">Kembali ke atas ↑</a>
     </footer>

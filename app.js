@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { collection, getDocs, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
+import { defaultSiteSettings } from "./site-settings.js";
 
 const defaultTutorials = [
   {
@@ -59,6 +60,34 @@ function renderCards() {
   emptyState.hidden = filtered.length > 0;
 }
 
+function applySiteSettings(settings) {
+  const merged = { ...defaultSiteSettings, ...settings };
+  document.title = merged.pageTitle;
+  document.querySelector('meta[name="description"]').content = merged.metaDescription;
+  document.querySelector("#site-brand").textContent = merged.brandName;
+  document.querySelector("#footer-brand").textContent = merged.brandName;
+  document.querySelector("#site-brand").setAttribute("aria-label", `${merged.brandName}, beranda`);
+
+  for (const [key, id] of Object.entries({
+    heroEyebrow: "hero-eyebrow",
+    heroTitleLine1: "hero-title-line-1",
+    heroTitleAccent: "hero-title-accent",
+    heroTitleLine2: "hero-title-line-2",
+    heroDescription: "hero-description",
+    heroButtonLabel: "hero-button-label",
+    tutorialEyebrow: "tutorial-eyebrow",
+    tutorialTitle: "tutorial-title",
+    tutorialAsideLine1: "tutorial-aside-line-1",
+    tutorialAsideLine2: "tutorial-aside-line-2",
+    aboutEyebrow: "about-eyebrow",
+    aboutTitleLine1: "about-title-line-1",
+    aboutTitleLine2: "about-title-line-2",
+    aboutDescription: "about-description"
+  })) {
+    document.getElementById(id).textContent = merged[key];
+  }
+}
+
 searchInput.addEventListener("input", renderCards);
 document.addEventListener("keydown", (event) => {
   if (event.key === "/" && document.activeElement !== searchInput) {
@@ -68,11 +97,14 @@ document.addEventListener("keydown", (event) => {
 });
 
 renderCards();
+applySiteSettings(defaultSiteSettings);
 
 if (isFirebaseConfigured) {
   try {
     const app = initializeApp(firebaseConfig);
     const database = getFirestore(app);
+    const settingsSnapshot = await getDoc(doc(database, "settings", "site"));
+    if (settingsSnapshot.exists()) applySiteSettings(settingsSnapshot.data());
     const snapshot = await getDocs(collection(database, "posts"));
     if (!snapshot.empty) {
       tutorials = snapshot.docs.map((postDocument) => ({ id: postDocument.id, ...postDocument.data() }));

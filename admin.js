@@ -1,8 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
+import { defaultSiteSettings } from "./site-settings.js";
 
 const loginPanel = document.querySelector("#login-panel");
 const dashboard = document.querySelector("#dashboard");
@@ -10,10 +11,12 @@ const loginMessage = document.querySelector("#login-message");
 const dashboardMessage = document.querySelector("#dashboard-message");
 const postForm = document.querySelector("#post-form");
 const postList = document.querySelector("#admin-post-list");
+const settingsForm = document.querySelector("#site-settings-form");
 const googleLogin = document.querySelector("#google-login");
 let auth;
 let database;
 let posts = [];
+let siteSettings = { ...defaultSiteSettings };
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -69,6 +72,45 @@ async function loadPosts() {
   renderPosts();
 }
 
+function fillSettingsForm(settings) {
+  for (const [key, value] of Object.entries(defaultSiteSettings)) {
+    settingsForm.elements.namedItem(key).value = settings[key] ?? value;
+  }
+}
+
+async function loadSiteSettings() {
+  const snapshot = await getDoc(doc(database, "settings", "site"));
+  siteSettings = snapshot.exists()
+    ? { ...defaultSiteSettings, ...snapshot.data() }
+    : { ...defaultSiteSettings };
+  fillSettingsForm(siteSettings);
+}
+
+settingsForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const submit = document.querySelector("#settings-save");
+  submit.disabled = true;
+  showMessage(dashboardMessage, "Menyimpan pengaturan website...");
+  const updatedSettings = Object.fromEntries(
+    Object.keys(defaultSiteSettings).map((key) => [key, settingsForm.elements.namedItem(key).value.trim()])
+  );
+
+  try {
+    await setDoc(doc(database, "settings", "site"), updatedSettings);
+    siteSettings = updatedSettings;
+    showMessage(dashboardMessage, "Tampilan website diperbarui untuk semua pengunjung.");
+  } catch (error) {
+    showMessage(dashboardMessage, getErrorMessage(error), true);
+  } finally {
+    submit.disabled = false;
+  }
+});
+
+document.querySelector("#settings-reset").addEventListener("click", () => {
+  fillSettingsForm(defaultSiteSettings);
+  showMessage(dashboardMessage, "Nilai default sudah diisikan. Klik Simpan tampilan untuk menerapkannya.");
+});
+
 function renderPosts() {
   document.querySelector("#admin-post-count").textContent = `(${posts.length})`;
   postList.innerHTML = posts.map((post) => `
@@ -97,6 +139,7 @@ function setAdminView(user) {
   if (isAdmin) {
     document.querySelector("#signed-in-email").textContent = user.email;
     loadPosts().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
+    loadSiteSettings().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
   }
 }
 

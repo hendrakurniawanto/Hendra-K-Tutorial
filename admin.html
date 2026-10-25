@@ -35,6 +35,45 @@
           <button class="sign-out" id="sign-out" type="button">Keluar</button>
         </div>
         <p class="admin-message" id="dashboard-message" role="status"></p>
+        <section class="site-settings-panel" aria-labelledby="site-settings-title">
+          <div class="settings-heading">
+            <div>
+              <p class="eyebrow">TAMPILAN PUBLIK</p>
+              <h2 id="site-settings-title">Pengaturan website</h2>
+            </div>
+          </div>
+          <form class="post-form settings-form" id="site-settings-form">
+            <label>Judul tab browser<input id="setting-page-title" name="pageTitle" required maxlength="90"></label>
+            <label>Deskripsi halaman untuk mesin pencari<textarea id="setting-meta-description" name="metaDescription" required rows="2" maxlength="180"></textarea></label>
+            <label>Nama brand<input id="setting-brand-name" name="brandName" required maxlength="40"></label>
+            <div class="form-row">
+              <label>Teks kecil di atas judul<input id="setting-hero-eyebrow" name="heroEyebrow" required maxlength="60"></label>
+              <label>Teks tombol pembuka<input id="setting-hero-button" name="heroButtonLabel" required maxlength="40"></label>
+            </div>
+            <label>Baris pertama judul utama<input id="setting-hero-line-1" name="heroTitleLine1" required maxlength="35"></label>
+            <div class="form-row">
+              <label>Kata berwarna aksen<input id="setting-hero-accent" name="heroTitleAccent" required maxlength="30"></label>
+              <label>Baris terakhir judul<input id="setting-hero-line-2" name="heroTitleLine2" required maxlength="40"></label>
+            </div>
+            <label>Deskripsi pembuka<textarea id="setting-hero-description" name="heroDescription" required rows="3" maxlength="240"></textarea></label>
+            <label>Teks kecil bagian tutorial<input id="setting-tutorial-eyebrow" name="tutorialEyebrow" required maxlength="70"></label>
+            <label>Judul bagian tutorial<input id="setting-tutorial-title" name="tutorialTitle" required maxlength="50"></label>
+            <div class="form-row">
+              <label>Deskripsi singkat, baris 1<input id="setting-tutorial-aside-1" name="tutorialAsideLine1" required maxlength="70"></label>
+              <label>Deskripsi singkat, baris 2<input id="setting-tutorial-aside-2" name="tutorialAsideLine2" required maxlength="70"></label>
+            </div>
+            <label>Teks kecil bagian Tentang<input id="setting-about-eyebrow" name="aboutEyebrow" required maxlength="60"></label>
+            <div class="form-row">
+              <label>Judul Tentang, baris 1<input id="setting-about-title-1" name="aboutTitleLine1" required maxlength="60"></label>
+              <label>Judul Tentang, baris 2<input id="setting-about-title-2" name="aboutTitleLine2" required maxlength="80"></label>
+            </div>
+            <label>Deskripsi Tentang<textarea id="setting-about-description" name="aboutDescription" required rows="3" maxlength="300"></textarea></label>
+            <div class="form-actions">
+              <button class="button button-dark" id="settings-save" type="submit">Simpan tampilan</button>
+              <button class="button button-light" id="settings-reset" type="button">Pulihkan default</button>
+            </div>
+          </form>
+        </section>
         <form class="post-form" id="post-form">
           <input id="post-id" type="hidden">
           <label>Judul<input id="post-title" name="title" required maxlength="100"></label>
