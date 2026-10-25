@@ -17,6 +17,8 @@ let auth;
 let database;
 let posts = [];
 let siteSettings = { ...defaultSiteSettings };
+let activeAdminUid = "";
+const redirectAttemptKey = "hendra-k-admin-redirect-pending";
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -57,8 +59,18 @@ if (requireConfiguredFirebase()) {
     auth = getAuth(app);
     database = getFirestore(app);
     getRedirectResult(auth).then((result) => {
-      if (result?.user) showMessage(loginMessage, "Login berhasil. Membuka dashboard admin...");
-    }).catch((error) => showMessage(loginMessage, getErrorMessage(error), true));
+      const returnedFromRedirect = sessionStorage.getItem(redirectAttemptKey) === "1";
+      sessionStorage.removeItem(redirectAttemptKey);
+      if (result?.user) {
+        showMessage(loginMessage, "Login berhasil. Membuka dashboard admin...");
+        handleAuthenticatedUser(result.user);
+      } else if (returnedFromRedirect && !auth.currentUser) {
+        showMessage(loginMessage, "Google mengembalikan ke website tanpa sesi login. Coba lagi, dan pilih akun admin yang sama.", true);
+      }
+    }).catch((error) => {
+      sessionStorage.removeItem(redirectAttemptKey);
+      showMessage(loginMessage, getErrorMessage(error), true);
+    });
   } catch (error) {
     googleLogin.disabled = true;
     showMessage(loginMessage, getErrorMessage(error), true);
@@ -139,29 +151,36 @@ function resetForm() {
   document.querySelector("#post-cancel").hidden = true;
 }
 
-function setAdminView(user) {
-  const isAdmin = user?.email?.toLowerCase() === adminEmail && user.emailVerified;
-  loginPanel.hidden = Boolean(isAdmin);
-  dashboard.hidden = !isAdmin;
-  if (isAdmin) {
-    document.querySelector("#signed-in-email").textContent = user.email;
-    loadPosts().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
-    loadSiteSettings().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
+function handleAuthenticatedUser(user) {
+  if (!user) {
+    activeAdminUid = "";
+    loginPanel.hidden = false;
+    dashboard.hidden = true;
+    return;
   }
+
+  if (user.email?.toLowerCase() !== adminEmail || !user.emailVerified) {
+    activeAdminUid = "";
+    loginPanel.hidden = false;
+    dashboard.hidden = true;
+    const account = user.email || "akun tanpa email";
+    showMessage(loginMessage, `Kamu masuk sebagai ${account}. Admin yang diizinkan adalah ${adminEmail}. Pilih akun admin saat login.`, true);
+    signOut(auth).catch((error) => console.warn("Gagal mengakhiri sesi non-admin.", error));
+    return;
+  }
+
+  loginPanel.hidden = true;
+  dashboard.hidden = false;
+  document.querySelector("#signed-in-email").textContent = user.email;
+  if (activeAdminUid === user.uid) return;
+  activeAdminUid = user.uid;
+  loadPosts().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
+  loadSiteSettings().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
 }
 
 if (auth) {
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      setAdminView(null);
-      return;
-    }
-    if (user.email?.toLowerCase() !== adminEmail || !user.emailVerified) {
-      await signOut(auth);
-      showMessage(loginMessage, `Akun ini tidak memiliki akses admin. Gunakan ${adminEmail}.`, true);
-      return;
-    }
-    setAdminView(user);
+  onAuthStateChanged(auth, (user) => handleAuthenticatedUser(user), (error) => {
+    showMessage(loginMessage, getErrorMessage(error), true);
   });
 }
 
@@ -173,10 +192,12 @@ googleLogin.addEventListener("click", async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      handleAuthenticatedUser(result.user);
     } catch (error) {
       if (error.code !== "auth/popup-blocked") throw error;
       showMessage(loginMessage, "Popup diblokir browser. Melanjutkan login dengan redirect...");
+      sessionStorage.setItem(redirectAttemptKey, "1");
       await signInWithRedirect(auth, provider);
     }
   } catch (error) {
