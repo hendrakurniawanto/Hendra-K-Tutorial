@@ -163,7 +163,7 @@ function handleAuthenticatedUser(user) {
     return;
   }
 
-  if (user.email?.toLowerCase() !== adminEmail || !user.emailVerified) {
+  if (user.email?.toLowerCase() !== adminEmail) {
     activeAdminUid = "";
     loginPanel.hidden = false;
     dashboard.hidden = true;
@@ -178,6 +178,11 @@ function handleAuthenticatedUser(user) {
   document.querySelector("#signed-in-email").textContent = user.email;
   if (activeAdminUid === user.uid) return;
   activeAdminUid = user.uid;
+  if (!user.emailVerified) {
+    showMessage(dashboardMessage, "Login berhasil, tetapi Google belum menandai email terverifikasi. Firestore dapat menolak penyimpanan sampai verifikasi email tersedia.", true);
+  } else {
+    showMessage(loginMessage, "Login berhasil.");
+  }
   loadPosts().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
   loadSiteSettings().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
 }
