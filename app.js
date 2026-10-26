@@ -34,10 +34,46 @@ const youtubeFeedStatus = document.querySelector("#youtube-feed-status");
 const youtubeFeedRetry = document.querySelector("#youtube-feed-retry");
 const feedbackForm = document.querySelector("#feedback-form");
 const feedbackStatus = document.querySelector("#feedback-status");
+const homeViews = document.querySelectorAll(".home-view");
+const homeTabs = document.querySelectorAll(".main-nav [data-home-tab]");
+const homeTabTriggers = document.querySelectorAll("[data-home-tab]");
 const tutorialsPerPage = 6;
 const youtubeCacheKey = "hendra-youtube-posts-v1";
 const youtubeCacheTtl = 6 * 60 * 60 * 1000;
 let visibleTutorialCount = tutorialsPerPage;
+
+function showHomeTab(tabName) {
+  homeViews.forEach((view) => {
+    view.hidden = view.id !== `home-view-${tabName}`;
+  });
+  homeTabs.forEach((tab) => {
+    const isActive = tab.dataset.homeTab === tabName;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+}
+
+homeTabTriggers.forEach((trigger) => {
+  trigger.addEventListener("click", (event) => {
+    event.preventDefault();
+    showHomeTab(trigger.dataset.homeTab);
+  });
+});
+
+homeTabs.forEach((tab) => {
+  tab.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+    event.preventDefault();
+    const currentIndex = [...homeTabs].indexOf(tab);
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    const nextTab = homeTabs[(currentIndex + direction + homeTabs.length) % homeTabs.length];
+    showHomeTab(nextTab.dataset.homeTab);
+    nextTab.focus();
+  });
+});
+
+showHomeTab("content");
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({

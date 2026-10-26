@@ -19,17 +19,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
-    <script type="module" src="app.js?v=8"></script>
+    <link rel="stylesheet" href="styles.css?v=4">
+    <script type="module" src="app.js?v=9"></script>
   </head>
   <body>
     <header class="site-header">
       <a class="wordmark" id="site-brand" href="#beranda" aria-label="HENDRA K, beranda">HENDRA <span>K.</span></a>
-      <nav class="main-nav" aria-label="Navigasi utama">
-        <a href="#tutorial">Konten</a>
-        <a href="#tentang">Tentang</a>
-        <a href="#playlist">Playlist</a>
-        <a href="#masukan">Masukan</a>
+      <nav class="main-nav" role="tablist" aria-label="Navigasi utama">
+        <button id="content-tab" type="button" role="tab" class="is-active" data-home-tab="content" aria-controls="home-view-content" aria-selected="true">Konten</button>
+        <button id="about-tab" type="button" role="tab" data-home-tab="about" aria-controls="home-view-about" aria-selected="false">Tentang</button>
+        <button id="playlist-tab" type="button" role="tab" data-home-tab="playlist" aria-controls="home-view-playlist" aria-selected="false">Playlist</button>
+        <button id="feedback-tab" type="button" role="tab" data-home-tab="feedback" aria-controls="home-view-feedback" aria-selected="false">Masukan</button>
       </nav>
       <div class="header-actions">
         <a class="admin-open" href="admin.html">Admin <span aria-hidden="true">↗</span></a>
@@ -43,7 +43,7 @@
           <p class="eyebrow"><span class="status-dot"></span> <span id="hero-eyebrow">CATATAN BELAJAR HENDRA</span></p>
           <h1 id="hero-title"><span id="hero-title-line-1">Belajar.</span><br><span id="hero-title-accent">Bikin.</span> <span id="hero-title-line-2">Bagikan.</span></h1>
           <p class="hero-intro" id="hero-description">Tutorial praktis soal web, teknologi, dan hal-hal digital. Dibuat sederhana supaya kamu bisa langsung mencoba.</p>
-          <a class="button button-dark" id="hero-button" href="#tutorial"><span id="hero-button-label">Jelajahi tutorial</span> <span aria-hidden="true">↓</span></a>
+          <a class="button button-dark" id="hero-button" href="#tutorial" data-home-tab="content"><span id="hero-button-label">Jelajahi tutorial</span> <span aria-hidden="true">↓</span></a>
           <div class="hero-footnote"><span>01 / BELAJAR TANPA RIBET</span><span>DARI HENDRA K.</span></div>
         </div>
         <div class="hero-art" aria-label="Suasana meja kerja dengan laptop dan catatan" role="img">
@@ -54,7 +54,7 @@
         <div class="hero-ticker" aria-hidden="true"><span>CATATAN DIGITAL</span><span>✳</span><span>LANGKAH KECIL, HASIL NYATA</span><span>✳</span><span>CATATAN DIGITAL</span><span>✳</span></div>
       </section>
 
-      <section class="tutorial-section" id="tutorial" aria-labelledby="tutorial-title">
+      <section class="tutorial-section home-view" id="home-view-content" role="tabpanel" aria-labelledby="content-tab">
         <div class="section-heading">
           <div>
             <p class="eyebrow" id="tutorial-eyebrow">CATATAN DAN PANDUAN PRAKTIS</p>
@@ -81,7 +81,7 @@
         <p class="empty-state" id="empty-state" hidden>Tidak ada tutorial yang cocok. Coba kata kunci atau kategori lain.</p>
       </section>
 
-      <section class="about-band" id="tentang" aria-labelledby="about-title">
+      <section class="about-band home-view" id="home-view-about" role="tabpanel" aria-labelledby="about-tab" hidden>
         <div class="about-stamp" aria-hidden="true">HK<br><span>✳</span></div>
         <div class="about-copy">
           <p class="eyebrow" id="about-eyebrow">SEDIKIT TENTANG SAYA</p>
@@ -90,7 +90,7 @@
         <p class="about-note" id="about-description">Tempat ini jadi catatan terbuka untuk hal-hal digital yang pernah kucoba. Semoga ada satu ide kecil yang berguna buat proyekmu berikutnya.</p>
       </section>
 
-      <section class="playlist-section" id="playlist" aria-labelledby="playlist-title">
+      <section class="playlist-section home-view" id="home-view-playlist" role="tabpanel" aria-labelledby="playlist-tab" hidden>
         <div class="section-heading">
           <div>
             <p class="eyebrow">YOUTUBE HENDRA K</p>
@@ -109,7 +109,7 @@
         </div>
       </section>
 
-      <section class="feedback-section" id="masukan" aria-labelledby="feedback-title">
+      <section class="feedback-section home-view" id="home-view-feedback" role="tabpanel" aria-labelledby="feedback-tab" hidden>
         <div class="section-heading">
           <div>
             <p class="eyebrow">RUANG BERCERITA</p>
