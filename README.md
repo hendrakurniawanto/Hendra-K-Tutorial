@@ -12,9 +12,7 @@ Buka [halaman admin](https://hendrakurniawanto.github.io/Hendra-K-Tutorial/admin
 
 Di dashboard yang sama, bagian **Pengaturan website** dapat mengubah judul tab dan deskripsi mesin pencari, nama brand, judul/teks pembuka, judul bagian tutorial, serta teks profil Tentang. Simpan perubahan untuk menerapkannya kepada semua pengunjung. Tombol **Isi default** mengisi ulang nilai awal ke formulir; tekan **Simpan tampilan** untuk benar-benar menerapkannya.
 
-Gambar utama dapat diganti dari kolom **URL gambar utama** dengan alamat gambar HTTPS langsung (misalnya URL berakhiran `.jpg`, `.png`, atau URL gambar CDN), atau diunggah langsung dari perangkat melalui kolom **Atau unggah gambar dari perangkat**. File gambar maksimal 5 MB dan akan disimpan ke Firebase Storage saat pengaturan disimpan. Gunakan slider **Posisi horizontal** dan **Posisi vertikal** untuk mengatur crop/titik fokus gambar pada frame hero. Pratinjau tampil di dashboard sebelum disimpan. Gambar untuk tiap postingan bisa diubah dari kolom URL gambar pada form postingan.
-
-Jika fitur unggah dipakai, deploy aturan Storage dengan Firebase CLI: `firebase deploy --only storage`. Pastikan Firebase Storage sudah dibuat pada project `hendra-k-tutorial`.
+Gambar utama dapat diganti dari kolom **URL gambar utama** dengan alamat gambar HTTPS langsung (misalnya URL berakhiran `.jpg`, `.png`, atau URL gambar CDN). Jika gambar masih ada di perangkat, unggah terlebih dahulu ke layanan hosting gambar pilihanmu, lalu tempel URL langsungnya ke kolom tersebut. Gunakan slider **Posisi horizontal** dan **Posisi vertikal** untuk mengatur crop/titik fokus gambar pada frame hero. Pratinjau tampil di dashboard sebelum disimpan. Gambar untuk tiap postingan bisa diubah dari kolom URL gambar pada form postingan.
 
 Statistik kunjungan memakai koleksi Firestore `pageViews`. Setelah memperbarui aturan pada `firestore.rules`, deploy dengan `firebase deploy --only firestore:rules` agar kunjungan dapat dicatat dan dibaca dashboard admin.
 
