@@ -99,12 +99,12 @@ function renderPost(post) {
   updateVideoSchema(post, canonicalUrl);
   articleElement.innerHTML = `
     ${image}
-    ${video}
     <header class="article-heading">
       <p class="eyebrow">${escapeHtml(post.category || "TUTORIAL").toUpperCase()} &nbsp; / &nbsp; ${escapeHtml(post.readTime || "")}</p>
       <p class="article-date">${escapeHtml(post.date || "")}</p>
       <h1>${escapeHtml(post.title)}</h1>
       <p class="article-summary">${escapeHtml(post.description || "")}</p>
+      ${video}
       <div class="article-byline"><span class="byline-mark">HK</span><span>HENDRA K.<br><small>CATATAN BELAJAR</small></span></div>
     </header>
     <div class="article-content">${content}</div>
