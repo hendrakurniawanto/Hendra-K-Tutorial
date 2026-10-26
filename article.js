@@ -15,6 +15,8 @@ function getDatabase() {
   return database;
 }
 
+const youtubeChannelUrl = "https://www.youtube.com/@hendra.k?sub_confirmation=1";
+
 function getYouTubeVideoId(url) {
   try {
     const parsed = new URL(url);
@@ -102,6 +104,14 @@ function renderPost(post) {
         <a class="article-video-thumbnail" href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Tonton ${escapeHtml(post.title)} di YouTube">
           <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
         </a>
+        <div class="article-video-card-body">
+          <p class="eyebrow">VIDEO YOUTUBE</p>
+          <h2>${escapeHtml(post.title)}</h2>
+          <div class="article-video-actions">
+            <a class="button button-dark" href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener noreferrer">Tonton &amp; Komentar di YouTube <span aria-hidden="true">↗</span></a>
+            <a class="button button-light" href="${youtubeChannelUrl}" target="_blank" rel="noopener noreferrer">Subscribe Channel Hendra K <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
       </section>`
     : "";
   const canonicalUrl = new URL(`article.html?id=${encodeURIComponent(post.id)}`, window.location.href).href;
