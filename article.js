@@ -86,14 +86,6 @@ function renderPost(post) {
         <a class="article-video-thumbnail" href="${escapeHtml(post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`)}" target="_blank" rel="noopener noreferrer" aria-label="Tonton ${escapeHtml(post.title)} di YouTube">
           <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(post.youtubeId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
         </a>
-        <div class="article-video-card-body">
-          <p class="eyebrow">VIDEO YOUTUBE</p>
-          <h2>${escapeHtml(post.title)}</h2>
-          <div class="article-video-actions">
-            <a class="button button-dark" href="${escapeHtml(post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`)}" target="_blank" rel="noopener noreferrer">Tonton &amp; Komentar di YouTube <span aria-hidden="true">↗</span></a>
-            <a class="button button-light" href="${youtubeChannelUrl}" target="_blank" rel="noopener noreferrer">Subscribe Channel Hendra K <span aria-hidden="true">↗</span></a>
-          </div>
-        </div>
       </section>`
     : "";
   const canonicalUrl = new URL(`article.html?id=${encodeURIComponent(post.id)}`, window.location.href).href;
