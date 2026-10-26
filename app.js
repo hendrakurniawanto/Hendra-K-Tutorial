@@ -246,8 +246,12 @@ if (isFirebaseConfigured) {
   try {
     const app = initializeApp(firebaseConfig);
     const database = getFirestore(app);
-    const viewSnapshot = await getDocs(collection(database, "pageViews"));
-    applyViewCounts(viewSnapshot);
+    try {
+      const viewSnapshot = await getDocs(collection(database, "pageViews"));
+      applyViewCounts(viewSnapshot);
+    } catch (error) {
+      console.warn("Statistik kunjungan gagal dimuat; postingan tetap ditampilkan.", error);
+    }
     const settingsSnapshot = await getDoc(doc(database, "settings", "site"));
     if (settingsSnapshot.exists()) applySiteSettings(settingsSnapshot.data());
     const snapshot = await getDocs(collection(database, "posts"));
