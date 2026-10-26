@@ -35,6 +35,12 @@ function escapeHtml(value) {
   })[character]);
 }
 
+function getDescriptionPreview(value, maxLength = 150) {
+  const description = String(value ?? "").trim();
+  if (description.length <= maxLength) return description;
+  return `${description.slice(0, maxLength).trimEnd()}...`;
+}
+
 function renderCards() {
   const query = searchInput.value.trim().toLocaleLowerCase("id");
   const filtered = tutorials.filter((tutorial) => {
@@ -51,8 +57,11 @@ function renderCards() {
       <div class="card-body">
         <div class="card-meta"><span>${escapeHtml(tutorial.date)}</span><span>${escapeHtml(tutorial.readTime)}</span></div>
         <h3><a href="article.html?id=${encodeURIComponent(tutorial.id)}">${escapeHtml(tutorial.title)}</a></h3>
-        <p>${escapeHtml(tutorial.description)}</p>
-        <a class="read-link" href="article.html?id=${encodeURIComponent(tutorial.id)}">Baca tutorial <span aria-hidden="true">↗</span></a>
+        <p>${escapeHtml(getDescriptionPreview(tutorial.description))}</p>
+        <div class="card-actions">
+          <a class="read-link" href="article.html?id=${encodeURIComponent(tutorial.id)}">Baca selengkapnya <span aria-hidden="true">↗</span></a>
+          ${tutorial.youtubeUrl ? `<a class="read-link" href="${escapeHtml(tutorial.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Tonton di YouTube <span aria-hidden="true">↗</span></a>` : ""}
+        </div>
       </div>
     </article>
   `).join("");

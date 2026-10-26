@@ -74,11 +74,14 @@ async function main() {
       category: "Video",
       date: formatDate(video.snippet.publishedAt),
       readTime: formatReadTime(durationSeconds),
-      description: description.slice(0, 220),
+      description: description.slice(0, 150).trimEnd() + (description.length > 150 ? "..." : ""),
+      fullDescription: description,
       image: video.snippet.thumbnails?.high?.url || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
       alt: `Thumbnail video YouTube: ${video.snippet.title}`,
       youtubeId: video.id,
       youtubeUrl: `https://www.youtube.com/watch?v=${video.id}`,
+      uploadDate: video.snippet.publishedAt,
+      duration: video.contentDetails.duration,
       content: [
         { heading: "Deskripsi video", text: description },
         { heading: "Tonton video", text: `Video ini tersedia di YouTube: https://www.youtube.com/watch?v=${video.id}` }

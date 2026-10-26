@@ -80,6 +80,7 @@ h1, h2, p { margin-top: 0; }
 .card-body h3 { margin: 11px 0 8px; font: 600 20px/1.22 var(--display); letter-spacing: 0; }
 .card-body h3 a:hover { color: #a43d2d; }
 .card-body > p { min-height: 44px; margin: 0 0 13px; color: #62665e; font-size: 12px; line-height: 1.7; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 .read-link { display: inline-flex; align-items: center; gap: 10px; padding: 0 0 4px; border: 0; border-bottom: 1px solid var(--ink); background: none; color: var(--ink); cursor: pointer; font-size: 10px; font-weight: 700; }
 .read-link span { color: var(--red); font-size: 14px; transition: transform .18s; }
 .read-link:hover span { transform: translate(2px, -2px); }
@@ -256,6 +257,7 @@ h1, h2, p { margin-top: 0; }
 .article-date { margin: 0 0 14px; color: var(--muted); font: 9px var(--mono); }
 .article-heading h1, .article-not-found h1 { margin: 0 0 17px; font: 600 clamp(36px, 6vw, 60px)/1.06 var(--display); }
 .article-summary { max-width: 650px; margin: 0; color: var(--muted); font-size: 16px; line-height: 1.75; }
+.article-heading .button { margin-top: 23px; }
 .article-byline { display: flex; align-items: center; gap: 11px; margin-top: 25px; font: 10px/1.6 var(--mono); }
 .byline-mark { display: grid; width: 38px; height: 38px; place-items: center; background: var(--green); color: var(--ink); font: 700 12px var(--display); }
 .article-byline small { color: var(--muted); font-size: 8px; }
