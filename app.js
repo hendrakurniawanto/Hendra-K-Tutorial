@@ -72,6 +72,8 @@ function applySiteSettings(settings) {
     heroImage.src = defaultSiteSettings.heroImage;
   }
   heroImage.alt = merged.heroImageAlt || defaultSiteSettings.heroImageAlt;
+  heroImage.style.objectPosition = `${merged.heroImagePositionX ?? defaultSiteSettings.heroImagePositionX}% ${merged.heroImagePositionY ?? defaultSiteSettings.heroImagePositionY}%`;
+  heroImage.style.transform = `scale(${Number(merged.heroImageZoom ?? defaultSiteSettings.heroImageZoom) / 100})`;
   document.querySelector("#site-brand").textContent = merged.brandName;
   document.querySelector("#footer-brand").textContent = merged.brandName;
   document.querySelector("#site-brand").setAttribute("aria-label", `${merged.brandName}, beranda`);

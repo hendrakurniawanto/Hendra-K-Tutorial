@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-storage.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
 import { defaultSiteSettings } from "./site-settings.js";
@@ -13,8 +14,10 @@ const postForm = document.querySelector("#post-form");
 const postList = document.querySelector("#admin-post-list");
 const settingsForm = document.querySelector("#site-settings-form");
 const googleLogin = document.querySelector("#google-login");
+const heroImageFile = document.querySelector("#setting-hero-image-file");
 let auth;
 let database;
+let storage;
 let posts = [];
 let siteSettings = { ...defaultSiteSettings };
 let activeAdminUid = "";
@@ -41,6 +44,9 @@ function getErrorMessage(error) {
     "auth/network-request-failed": "Koneksi login Google gagal. Periksa koneksi internet lalu coba lagi.",
     "auth/operation-not-allowed": "Login Google belum diaktifkan pada Firebase Authentication.",
     "auth/invalid-credential": "Login Google tidak berhasil. Pilih akun admin yang benar lalu coba lagi.",
+    "storage/unauthorized": "Akses unggah gambar ditolak. Pastikan akun admin dan Storage Rules sudah benar.",
+    "storage/object-not-found": "Lokasi penyimpanan gambar tidak ditemukan. Pastikan Firebase Storage sudah diaktifkan.",
+    "storage/unknown": "Firebase Storage mengalami kendala. Coba lagi beberapa saat.",
     "permission-denied": "Akses ditolak Firestore. Pastikan Firestore Rules dan email admin sudah benar.",
     "unavailable": "Firebase tidak dapat dijangkau. Periksa koneksi internet."
   };
@@ -59,6 +65,7 @@ if (requireConfiguredFirebase()) {
     const app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     database = getFirestore(app);
+    storage = getStorage(app);
     getRedirectResult(auth).then((result) => {
       const returnedFromRedirect = sessionStorage.getItem(redirectAttemptKey) === "1";
       sessionStorage.removeItem(redirectAttemptKey);
@@ -98,25 +105,114 @@ function fillSettingsForm(settings) {
   for (const [key, value] of Object.entries(defaultSiteSettings)) {
     settingsForm.elements.namedItem(key).value = settings[key] ?? value;
   }
-  updateSettingsImagePreview(settings.heroImage ?? defaultSiteSettings.heroImage, settings.heroImageAlt ?? defaultSiteSettings.heroImageAlt);
+  updateSettingsImagePreview(
+    settings.heroImage ?? defaultSiteSettings.heroImage,
+    settings.heroImageAlt ?? defaultSiteSettings.heroImageAlt,
+    settings.heroImagePositionX ?? defaultSiteSettings.heroImagePositionX,
+    settings.heroImagePositionY ?? defaultSiteSettings.heroImagePositionY,
+    settings.heroImageZoom ?? defaultSiteSettings.heroImageZoom
+  );
 }
 
-function updateSettingsImagePreview(url, altText) {
+function updateSettingsImagePreview(url, altText, positionX = "50", positionY = "50", zoom = "100") {
   const preview = document.querySelector("#settings-image-preview");
+  const horizontalPosition = document.querySelector("#setting-hero-image-position-x");
+  const verticalPosition = document.querySelector("#setting-hero-image-position-y");
+  const zoomPosition = document.querySelector("#setting-hero-image-zoom");
   preview.src = url;
   preview.alt = altText || "Pratinjau gambar utama website";
+  preview.style.objectPosition = `${positionX}% ${positionY}%`;
+  preview.style.transform = `scale(${Number(zoom) / 100})`;
+  horizontalPosition.value = positionX;
+  verticalPosition.value = positionY;
+  zoomPosition.value = zoom;
+  document.querySelector("#setting-hero-image-position-x-value").value = `${positionX}%`;
+  document.querySelector("#setting-hero-image-position-y-value").value = `${positionY}%`;
+  document.querySelector("#setting-hero-image-zoom-value").value = `${zoom}%`;
 }
+
+function updateCropPreview() {
+  updateSettingsImagePreview(
+    document.querySelector("#settings-image-preview").src,
+    settingsForm.elements.namedItem("heroImageAlt").value,
+    settingsForm.elements.namedItem("heroImagePositionX").value,
+    settingsForm.elements.namedItem("heroImagePositionY").value,
+    settingsForm.elements.namedItem("heroImageZoom").value
+  );
+}
+
+heroImageFile.addEventListener("change", (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showMessage(dashboardMessage, "File yang dipilih harus berupa gambar.", true);
+    event.target.value = "";
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showMessage(dashboardMessage, "Ukuran gambar maksimal 5 MB.", true);
+    event.target.value = "";
+    return;
+  }
+  updateSettingsImagePreview(
+    URL.createObjectURL(file),
+    settingsForm.elements.namedItem("heroImageAlt").value,
+    settingsForm.elements.namedItem("heroImagePositionX").value,
+    settingsForm.elements.namedItem("heroImagePositionY").value,
+    settingsForm.elements.namedItem("heroImageZoom").value
+  );
+});
 
 settingsForm.elements.namedItem("heroImage").addEventListener("input", (event) => {
   updateSettingsImagePreview(event.target.value, settingsForm.elements.namedItem("heroImageAlt").value);
 });
 settingsForm.elements.namedItem("heroImageAlt").addEventListener("input", (event) => {
-  updateSettingsImagePreview(settingsForm.elements.namedItem("heroImage").value, event.target.value);
+  updateSettingsImagePreview(
+    settingsForm.elements.namedItem("heroImage").value,
+    event.target.value,
+    settingsForm.elements.namedItem("heroImagePositionX").value,
+    settingsForm.elements.namedItem("heroImagePositionY").value,
+    settingsForm.elements.namedItem("heroImageZoom").value
+  );
 });
-document.querySelector("#settings-image-preview").addEventListener("error", (event) => {
+settingsForm.elements.namedItem("heroImageZoom").addEventListener("input", updateCropPreview);
+settingsForm.elements.namedItem("heroImagePositionX").addEventListener("input", updateCropPreview);
+settingsForm.elements.namedItem("heroImagePositionY").addEventListener("input", updateCropPreview);
+const cropPreview = document.querySelector("#settings-image-preview");
+let cropDragStart;
+
+cropPreview.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  cropPreview.setPointerCapture(event.pointerId);
+  cropDragStart = {
+    x: event.clientX,
+    y: event.clientY,
+    positionX: Number(settingsForm.elements.namedItem("heroImagePositionX").value),
+    positionY: Number(settingsForm.elements.namedItem("heroImagePositionY").value)
+  };
+  cropPreview.classList.add("is-dragging");
+});
+cropPreview.addEventListener("pointermove", (event) => {
+  if (!cropDragStart) return;
+  const horizontalPosition = settingsForm.elements.namedItem("heroImagePositionX");
+  const verticalPosition = settingsForm.elements.namedItem("heroImagePositionY");
+  horizontalPosition.value = Math.max(0, Math.min(100, cropDragStart.positionX - ((event.clientX - cropDragStart.x) / cropPreview.clientWidth) * 100));
+  verticalPosition.value = Math.max(0, Math.min(100, cropDragStart.positionY - ((event.clientY - cropDragStart.y) / cropPreview.clientHeight) * 100));
+  updateCropPreview();
+});
+cropPreview.addEventListener("pointerup", () => {
+  cropDragStart = null;
+  cropPreview.classList.remove("is-dragging");
+});
+cropPreview.addEventListener("pointercancel", () => {
+  cropDragStart = null;
+  cropPreview.classList.remove("is-dragging");
+});
+cropPreview.addEventListener("dragstart", (event) => event.preventDefault());
+cropPreview.addEventListener("error", (event) => {
   event.currentTarget.classList.add("is-broken");
 });
-document.querySelector("#settings-image-preview").addEventListener("load", (event) => {
+cropPreview.addEventListener("load", (event) => {
   event.currentTarget.classList.remove("is-broken");
 });
 
@@ -144,8 +240,23 @@ settingsForm.addEventListener("submit", async (event) => {
   const updatedSettings = Object.fromEntries(
     Object.keys(defaultSiteSettings).map((key) => [key, settingsForm.elements.namedItem(key).value.trim()])
   );
+  const [selectedImage] = heroImageFile.files;
+  if (selectedImage) {
+    try {
+      const fileExtension = selectedImage.name.split(".").pop().toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+      const imageReference = ref(storage, `site/hero-${Date.now()}.${fileExtension}`);
+      showMessage(dashboardMessage, "Mengunggah gambar utama...");
+      await uploadBytes(imageReference, selectedImage, { contentType: selectedImage.type });
+      updatedSettings.heroImage = await getDownloadURL(imageReference);
+      settingsForm.elements.namedItem("heroImage").value = updatedSettings.heroImage;
+    } catch (error) {
+      showMessage(dashboardMessage, getErrorMessage(error), true);
+      submit.disabled = false;
+      return;
+    }
+  }
   if (!isHttpsUrl(updatedSettings.heroImage)) {
-    showMessage(dashboardMessage, "URL gambar harus diawali https://.", true);
+    showMessage(dashboardMessage, "Masukkan URL gambar HTTPS atau pilih file gambar dari perangkat.", true);
     submit.disabled = false;
     return;
   }
