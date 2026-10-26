@@ -18,6 +18,8 @@ const heroImageFile = document.querySelector("#setting-hero-image-file");
 const statsTotal = document.querySelector("#admin-stats-total");
 const statsMessage = document.querySelector("#admin-stats-message");
 const monthlyStats = document.querySelector("#admin-monthly-stats");
+const adminViews = document.querySelectorAll(".admin-view");
+const adminViewButtons = document.querySelectorAll("[data-admin-view]");
 let auth;
 let database;
 let storage;
@@ -37,6 +39,21 @@ function showMessage(target, message, isError = false) {
   target.textContent = message;
   target.classList.toggle("is-error", isError);
 }
+
+function showAdminView(viewName) {
+  adminViews.forEach((view) => {
+    view.hidden = view.id !== `admin-view-${viewName}`;
+  });
+  adminViewButtons.forEach((button) => {
+    const isActive = button.dataset.adminView === viewName;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+}
+
+adminViewButtons.forEach((button) => {
+  button.addEventListener("click", () => showAdminView(button.dataset.adminView));
+});
 
 function getErrorMessage(error) {
   const messages = {
@@ -326,6 +343,7 @@ function renderPosts() {
     <article class="admin-post-row">
       <div><strong>${escapeHtml(post.title)}</strong><span>${escapeHtml(post.category)} · ${escapeHtml(post.date)}</span></div>
       <div class="admin-row-actions">
+        <a href="article.html?id=${encodeURIComponent(post.id)}" target="_blank" rel="noopener noreferrer">Preview</a>
         <button type="button" data-edit="${escapeHtml(post.id)}">Edit</button>
         <button type="button" data-delete="${escapeHtml(post.id)}" aria-label="Hapus ${escapeHtml(post.title)}">Hapus</button>
       </div>
@@ -441,6 +459,7 @@ postForm.addEventListener("submit", async (event) => {
     else posts[index] = { id, ...post };
     renderPosts();
     resetForm();
+    showAdminView("posts");
     showMessage(dashboardMessage, "Postingan tersimpan dan sudah tersedia di website publik.");
   } catch (error) {
     showMessage(dashboardMessage, getErrorMessage(error), true);
@@ -465,6 +484,7 @@ postList.addEventListener("click", async (event) => {
     document.querySelector("#post-body").value = (post.content || []).map((section) => section.text || (section.list || []).join("\n")).join("\n\n");
     document.querySelector("#post-save").textContent = "Simpan perubahan";
     document.querySelector("#post-cancel").hidden = false;
+    showAdminView("create");
     document.querySelector("#post-title").focus();
   }
   if (deleteButton) {

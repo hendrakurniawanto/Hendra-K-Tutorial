@@ -35,7 +35,13 @@
           <button class="sign-out" id="sign-out" type="button">Keluar</button>
         </div>
         <p class="admin-message" id="dashboard-message" role="status"></p>
-        <section class="site-settings-panel" aria-labelledby="site-settings-title">
+        <nav class="admin-nav" aria-label="Menu dashboard admin">
+          <button type="button" class="is-active" data-admin-view="stats" aria-selected="true">Statistik</button>
+          <button type="button" data-admin-view="settings" aria-selected="false">Pengaturan website</button>
+          <button type="button" data-admin-view="create" aria-selected="false">Buat postingan</button>
+          <button type="button" data-admin-view="posts" aria-selected="false">Daftar postingan</button>
+        </nav>
+        <section class="site-settings-panel admin-view" id="admin-view-settings" aria-labelledby="site-settings-title" hidden>
           <div class="settings-heading">
             <div>
               <p class="eyebrow">TAMPILAN PUBLIK</p>
@@ -85,7 +91,7 @@
             </div>
           </form>
         </section>
-        <section class="admin-stats" aria-labelledby="admin-stats-title">
+        <section class="admin-stats admin-view" id="admin-view-stats" aria-labelledby="admin-stats-title">
           <div class="settings-heading">
             <div>
               <p class="eyebrow">ANALITIK WEBSITE</p>
@@ -96,7 +102,8 @@
           <p class="field-hint" id="admin-stats-message">Memuat statistik...</p>
           <div id="admin-monthly-stats"></div>
         </section>
-        <form class="post-form" id="post-form">
+        <form class="post-form admin-view" id="admin-view-create" aria-labelledby="post-form-title" hidden>
+          <h2 id="post-form-title">Buat postingan</h2>
           <input id="post-id" type="hidden">
           <label>Judul<input id="post-title" name="title" required maxlength="100"></label>
           <div class="form-row">
@@ -112,7 +119,7 @@
             <button class="button button-light" id="post-cancel" type="button" hidden>Batal edit</button>
           </div>
         </form>
-        <section class="admin-posts" aria-labelledby="posts-title">
+        <section class="admin-posts admin-view" id="admin-view-posts" aria-labelledby="posts-title" hidden>
           <h2 id="posts-title">Postingan saat ini <span id="admin-post-count"></span></h2>
           <div id="admin-post-list"></div>
         </section>
