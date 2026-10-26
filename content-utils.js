@@ -4,6 +4,20 @@ export function escapeHtml(value) {
   })[character]);
 }
 
+export function normalizeImageUrl(value) {
+  const imageUrl = String(value ?? "").trim();
+  try {
+    const parsed = new URL(imageUrl);
+    if (!["drive.google.com", "www.drive.google.com", "docs.google.com"].includes(parsed.hostname)) return imageUrl;
+    const fileId = parsed.pathname.match(/\/file\/d\/([^/]+)/)?.[1] || parsed.searchParams.get("id");
+    return fileId
+      ? `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w1600`
+      : imageUrl;
+  } catch {
+    return imageUrl;
+  }
+}
+
 function getYouTubeVideoId(url) {
   try {
     const parsed = new URL(url);

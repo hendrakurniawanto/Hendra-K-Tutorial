@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { collection, doc, getDoc, getDocs, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultSiteSettings } from "./site-settings.js";
+import { normalizeImageUrl } from "./content-utils.js";
 
 const defaultTutorials = [
   {
@@ -151,7 +152,7 @@ function applySiteSettings(settings) {
   document.querySelector('meta[name="description"]').content = merged.metaDescription;
   const heroImage = document.querySelector("#hero-image");
   try {
-    const imageUrl = new URL(merged.heroImage);
+    const imageUrl = new URL(normalizeImageUrl(merged.heroImage));
     if (imageUrl.protocol === "https:") heroImage.src = imageUrl.href;
   } catch {
     heroImage.src = defaultSiteSettings.heroImage;

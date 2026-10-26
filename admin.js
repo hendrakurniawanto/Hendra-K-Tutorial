@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
+import { normalizeImageUrl } from "./content-utils.js";
 import { defaultPosts } from "./posts-data.js";
 import { defaultSiteSettings } from "./site-settings.js";
 
@@ -187,7 +188,7 @@ function updateSettingsImagePreview(url, altText, positionX = "50", positionY = 
   const horizontalPosition = document.querySelector("#setting-hero-image-position-x");
   const verticalPosition = document.querySelector("#setting-hero-image-position-y");
   const zoomPosition = document.querySelector("#setting-hero-image-zoom");
-  preview.src = url;
+  preview.src = normalizeImageUrl(url);
   preview.alt = altText || "Pratinjau gambar utama website";
   preview.style.objectPosition = `${positionX}% ${positionY}%`;
   preview.style.transform = `scale(${Number(zoom) / 100})`;
@@ -210,7 +211,7 @@ function updateCropPreview() {
 }
 
 settingsForm.elements.namedItem("heroImage").addEventListener("input", (event) => {
-  updateSettingsImagePreview(event.target.value, settingsForm.elements.namedItem("heroImageAlt").value);
+  updateSettingsImagePreview(normalizeImageUrl(event.target.value), settingsForm.elements.namedItem("heroImageAlt").value);
 });
 settingsForm.elements.namedItem("heroImageAlt").addEventListener("input", (event) => {
   updateSettingsImagePreview(
@@ -286,6 +287,8 @@ settingsForm.addEventListener("submit", async (event) => {
   const updatedSettings = Object.fromEntries(
     Object.keys(defaultSiteSettings).map((key) => [key, settingsForm.elements.namedItem(key).value.trim()])
   );
+  updatedSettings.heroImage = normalizeImageUrl(updatedSettings.heroImage);
+  settingsForm.elements.namedItem("heroImage").value = updatedSettings.heroImage;
   if (!isHttpsUrl(updatedSettings.heroImage)) {
     showMessage(dashboardMessage, "Masukkan URL langsung gambar dengan HTTPS.", true);
     submit.disabled = false;
