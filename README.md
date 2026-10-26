@@ -16,6 +16,10 @@ Gambar utama dapat diganti dari kolom **URL gambar utama** dengan alamat gambar 
 
 Jika fitur unggah dipakai, deploy aturan Storage dengan Firebase CLI: `firebase deploy --only storage`. Pastikan Firebase Storage sudah dibuat pada project `hendra-k-tutorial`.
 
+## Sinkronisasi video YouTube
+
+Workflow GitHub Pages memeriksa channel YouTube `@hendra.k` setiap 6 jam dan saat workflow dijalankan manual. Video minimal 4 menit akan ditambahkan ke website sebagai postingan dengan embed YouTube; live stream dan video yang lebih pendek dilewati. Agar sinkronisasi aktif, buat API key YouTube Data API v3 lalu simpan sebagai GitHub Actions secret bernama `YOUTUBE_API_KEY` pada repository. API key hanya dipakai oleh workflow, bukan oleh halaman publik.
+
 Setiap kartu, gambar, dan judul postingan membuka halaman artikel tersendiri. Untuk menampilkan judul yang bisa diklik, tulis format `[Teks yang tampil](https://alamat-link)` di isi postingan, misalnya `[Baca panduan resmi](https://example.com/panduan)`. URL polos `https://...` tetap didukung. URL YouTube akan menampilkan thumbnail preview; klik preview untuk membuka videonya di YouTube.
 
 Jangan pernah membagikan password atau token login. Jangan mengganti Firestore Rules menjadi akses publik tanpa pembatasan tulis. Paket gratis Firebase memiliki kuota dan ketentuan penggunaan yang dapat berubah.

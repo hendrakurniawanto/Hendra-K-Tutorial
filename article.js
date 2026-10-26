@@ -23,11 +23,15 @@ function renderPost(post) {
   const image = post.image
     ? `<img class="article-cover" src="${escapeHtml(post.image)}" alt="${escapeHtml(post.alt || post.title)}">`
     : "";
+  const video = post.youtubeId
+    ? `<div class="article-video"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(post.youtubeId)}?rel=0" title="${escapeHtml(post.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`
+    : "";
 
   document.title = `${post.title} — HENDRA K`;
   document.querySelector('meta[name="description"]').content = post.description || post.title;
   articleElement.innerHTML = `
     ${image}
+    ${video}
     <header class="article-heading">
       <p class="eyebrow">${escapeHtml(post.category || "TUTORIAL").toUpperCase()} &nbsp; / &nbsp; ${escapeHtml(post.readTime || "")}</p>
       <p class="article-date">${escapeHtml(post.date || "")}</p>
@@ -55,6 +59,15 @@ function renderPost(post) {
 
 async function loadPost() {
   let post = defaultPosts.find((item) => item.id === articleId);
+  if (!post && articleId?.startsWith("youtube-")) {
+    try {
+      const response = await fetch(`youtube-posts.json?v=${Date.now()}`);
+      const youtubePosts = response.ok ? await response.json() : [];
+      post = youtubePosts.find((item) => item.id === articleId);
+    } catch (error) {
+      console.warn("Feed YouTube gagal dimuat pada halaman artikel.", error);
+    }
+  }
   if (isFirebaseConfigured && articleId) {
     try {
       const app = initializeApp(firebaseConfig);

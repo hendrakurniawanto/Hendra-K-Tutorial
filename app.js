@@ -22,6 +22,7 @@ const defaultTutorials = [
 ];
 
 let tutorials = defaultTutorials.map((tutorial) => ({ ...tutorial }));
+let youtubePosts = [];
 
 const grid = document.querySelector("#tutorial-grid");
 const searchInput = document.querySelector("#tutorial-search");
@@ -98,6 +99,18 @@ function applySiteSettings(settings) {
   }
 }
 
+async function loadYoutubePosts() {
+  try {
+    const response = await fetch(`youtube-posts.json?v=${Date.now()}`);
+    if (!response.ok) return [];
+    const posts = await response.json();
+    return Array.isArray(posts) ? posts : [];
+  } catch (error) {
+    console.warn("Feed YouTube gagal dimuat; melanjutkan tanpa postingan YouTube.", error);
+    return [];
+  }
+}
+
 searchInput.addEventListener("input", renderCards);
 document.addEventListener("keydown", (event) => {
   if (event.key === "/" && document.activeElement !== searchInput) {
@@ -109,6 +122,12 @@ document.addEventListener("keydown", (event) => {
 renderCards();
 applySiteSettings(defaultSiteSettings);
 
+youtubePosts = await loadYoutubePosts();
+if (youtubePosts.length) {
+  tutorials = [...youtubePosts, ...defaultTutorials];
+  renderCards();
+}
+
 if (isFirebaseConfigured) {
   try {
     const app = initializeApp(firebaseConfig);
@@ -117,8 +136,14 @@ if (isFirebaseConfigured) {
     if (settingsSnapshot.exists()) applySiteSettings(settingsSnapshot.data());
     const snapshot = await getDocs(collection(database, "posts"));
     if (!snapshot.empty) {
-      tutorials = snapshot.docs.map((postDocument) => ({ id: postDocument.id, ...postDocument.data() }));
+      tutorials = [
+        ...youtubePosts,
+        ...snapshot.docs.map((postDocument) => ({ id: postDocument.id, ...postDocument.data() }))
+      ];
       tutorials.sort((first, second) => (second.createdAt || 0) - (first.createdAt || 0));
+      renderCards();
+    } else if (youtubePosts.length) {
+      tutorials = [...youtubePosts, ...defaultTutorials];
       renderCards();
     }
   } catch (error) {
