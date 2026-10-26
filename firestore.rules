@@ -16,5 +16,13 @@ service cloud.firestore {
       allow read: if settingId == 'site';
       allow create, update, delete: if settingId == 'site' && isAdmin();
     }
+
+    match /pageViews/{viewId} {
+      allow read: if true;
+      allow create: if request.resource.data.postId is string
+        && request.resource.data.month is string
+        && request.resource.data.createdAt is number;
+      allow update, delete: if isAdmin();
+    }
   }
 }

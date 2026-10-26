@@ -23,11 +23,19 @@ const defaultTutorials = [
 
 let tutorials = defaultTutorials.map((tutorial) => ({ ...tutorial }));
 let youtubePosts = [];
+let viewCounts = {};
 
 const grid = document.querySelector("#tutorial-grid");
 const searchInput = document.querySelector("#tutorial-search");
 const resultsCount = document.querySelector("#results-count");
 const emptyState = document.querySelector("#empty-state");
+const loadMoreButton = document.querySelector("#load-more-tutorials");
+const youtubeFeedStatus = document.querySelector("#youtube-feed-status");
+const youtubeFeedRetry = document.querySelector("#youtube-feed-retry");
+const tutorialsPerPage = 6;
+const youtubeCacheKey = "hendra-youtube-posts-v1";
+const youtubeCacheTtl = 6 * 60 * 60 * 1000;
+let visibleTutorialCount = tutorialsPerPage;
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -41,6 +49,32 @@ function getDescriptionPreview(value, maxLength = 150) {
   return `${description.slice(0, maxLength).trimEnd()}...`;
 }
 
+function updateVideoListSchema() {
+  const schemaElement = document.querySelector("#video-list-schema");
+  if (!schemaElement) return;
+  const items = tutorials
+    .filter((tutorial) => tutorial.youtubeId && tutorial.youtubeUrl)
+    .map((tutorial, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: tutorial.youtubeUrl,
+      item: {
+        "@type": "VideoObject",
+        name: tutorial.title,
+        description: tutorial.fullDescription || tutorial.description || tutorial.title,
+        thumbnailUrl: tutorial.image ? [tutorial.image] : [],
+        uploadDate: tutorial.uploadDate || undefined,
+        contentUrl: tutorial.youtubeUrl,
+        url: tutorial.youtubeUrl
+      }
+    }));
+  schemaElement.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items
+  }).replace(/</g, "\\u003c");
+}
+
 function renderCards() {
   const query = searchInput.value.trim().toLocaleLowerCase("id");
   const filtered = tutorials.filter((tutorial) => {
@@ -48,16 +82,17 @@ function renderCards() {
     return searchable.includes(query);
   });
 
-  grid.innerHTML = filtered.map((tutorial, index) => `
+  grid.innerHTML = filtered.slice(0, visibleTutorialCount).map((tutorial, index) => `
     <article class="tutorial-card" style="animation-delay:${index * 55}ms">
-      <a class="card-image-wrap" href="article.html?id=${encodeURIComponent(tutorial.id)}" aria-label="Buka ${escapeHtml(tutorial.title)}">
+      <a class="card-image-wrap" href="${escapeHtml(tutorial.youtubeUrl || `article.html?id=${encodeURIComponent(tutorial.id)}`)}"${tutorial.youtubeUrl ? ' target="_blank" rel="noopener noreferrer"' : ""} aria-label="${tutorial.youtubeUrl ? "Tonton" : "Buka"} ${escapeHtml(tutorial.title)}">
         <img src="${escapeHtml(tutorial.image)}" alt="${escapeHtml(tutorial.alt)}" loading="lazy">
         <span class="card-category">${escapeHtml(tutorial.category).toUpperCase()}</span>
       </a>
       <div class="card-body">
         <div class="card-meta"><span>${escapeHtml(tutorial.date)}</span><span>${escapeHtml(tutorial.readTime)}</span></div>
-        <h3><a href="article.html?id=${encodeURIComponent(tutorial.id)}">${escapeHtml(tutorial.title)}</a></h3>
+        <h3><a href="${escapeHtml(tutorial.youtubeUrl || `article.html?id=${encodeURIComponent(tutorial.id)}`)}"${tutorial.youtubeUrl ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(tutorial.title)}</a></h3>
         <p>${escapeHtml(getDescriptionPreview(tutorial.description))}</p>
+        <p class="card-views">${viewCounts[tutorial.id] || 0} kunjungan</p>
         <div class="card-actions">
           <a class="read-link" href="article.html?id=${encodeURIComponent(tutorial.id)}">Baca selengkapnya <span aria-hidden="true">↗</span></a>
           ${tutorial.youtubeUrl ? `<a class="read-link" href="${escapeHtml(tutorial.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Tonton di YouTube <span aria-hidden="true">↗</span></a>` : ""}
@@ -68,6 +103,8 @@ function renderCards() {
 
   resultsCount.textContent = `${String(filtered.length).padStart(2, "0")} TUTORIAL`;
   emptyState.hidden = filtered.length > 0;
+  loadMoreButton.hidden = visibleTutorialCount >= filtered.length || filtered.length === 0;
+  updateVideoListSchema();
 }
 
 function applySiteSettings(settings) {
@@ -108,19 +145,82 @@ function applySiteSettings(settings) {
   }
 }
 
-async function loadYoutubePosts() {
+function readYoutubeCache() {
   try {
-    const response = await fetch(`youtube-posts.json?v=${Date.now()}`);
-    if (!response.ok) return [];
-    const posts = await response.json();
-    return Array.isArray(posts) ? posts : [];
+    const cached = JSON.parse(localStorage.getItem(youtubeCacheKey) || "null");
+    if (!Array.isArray(cached?.posts) || !Number.isFinite(cached.savedAt)) return null;
+    return cached;
   } catch (error) {
-    console.warn("Feed YouTube gagal dimuat; melanjutkan tanpa postingan YouTube.", error);
+    console.warn("Cache video YouTube tidak dapat dibaca.", error);
+    return null;
+  }
+}
+
+function writeYoutubeCache(posts) {
+  try {
+    localStorage.setItem(youtubeCacheKey, JSON.stringify({ posts, savedAt: Date.now() }));
+  } catch (error) {
+    console.warn("Cache video YouTube tidak dapat disimpan.", error);
+  }
+}
+
+function showYoutubeFeedStatus(message, isError = false, canRetry = false) {
+  youtubeFeedStatus.textContent = message;
+  youtubeFeedStatus.classList.toggle("is-error", isError);
+  youtubeFeedStatus.hidden = !message;
+  youtubeFeedRetry.hidden = !canRetry;
+}
+
+function mergeYoutubePosts(posts) {
+  youtubePosts = posts;
+  const nonYoutubePosts = tutorials.filter((tutorial) => !tutorial.id.startsWith("youtube-"));
+  tutorials = [...youtubePosts, ...nonYoutubePosts];
+  visibleTutorialCount = tutorialsPerPage;
+  renderCards();
+}
+
+function applyViewCounts(snapshot) {
+  viewCounts = {};
+  snapshot.forEach((view) => {
+    const postId = view.data().postId;
+    if (postId) viewCounts[postId] = (viewCounts[postId] || 0) + 1;
+  });
+  renderCards();
+}
+
+async function loadYoutubePosts(forceRefresh = false) {
+  const cached = readYoutubeCache();
+  if (!forceRefresh && cached && Date.now() - cached.savedAt < youtubeCacheTtl) {
+    return cached.posts;
+  }
+
+  try {
+    const response = await fetch("youtube-posts.json", { cache: "no-cache" });
+    if (!response.ok) throw new Error(`Feed YouTube gagal (${response.status}).`);
+    const posts = await response.json();
+    if (!Array.isArray(posts)) throw new Error("Format feed YouTube tidak valid.");
+    writeYoutubeCache(posts);
+    showYoutubeFeedStatus("");
+    return posts;
+  } catch (error) {
+    console.warn("Feed YouTube gagal dimuat.", error);
+    if (cached?.posts?.length) {
+      showYoutubeFeedStatus("Gagal memuat video terbaru. Menampilkan video tersimpan.");
+      return cached.posts;
+    }
+    showYoutubeFeedStatus("Gagal memuat video, silakan coba lagi nanti.", true, true);
     return [];
   }
 }
 
-searchInput.addEventListener("input", renderCards);
+searchInput.addEventListener("input", () => {
+  visibleTutorialCount = tutorialsPerPage;
+  renderCards();
+});
+loadMoreButton.addEventListener("click", () => {
+  visibleTutorialCount += tutorialsPerPage;
+  renderCards();
+});
 document.addEventListener("keydown", (event) => {
   if (event.key === "/" && document.activeElement !== searchInput) {
     event.preventDefault();
@@ -132,15 +232,22 @@ renderCards();
 applySiteSettings(defaultSiteSettings);
 
 youtubePosts = await loadYoutubePosts();
-if (youtubePosts.length) {
-  tutorials = [...youtubePosts, ...defaultTutorials];
-  renderCards();
-}
+if (youtubePosts.length) mergeYoutubePosts(youtubePosts);
+
+youtubeFeedRetry.addEventListener("click", async () => {
+  youtubeFeedRetry.disabled = true;
+  showYoutubeFeedStatus("Mencoba memuat video lagi...");
+  const posts = await loadYoutubePosts(true);
+  if (posts.length) mergeYoutubePosts(posts);
+  youtubeFeedRetry.disabled = false;
+});
 
 if (isFirebaseConfigured) {
   try {
     const app = initializeApp(firebaseConfig);
     const database = getFirestore(app);
+    const viewSnapshot = await getDocs(collection(database, "pageViews"));
+    applyViewCounts(viewSnapshot);
     const settingsSnapshot = await getDoc(doc(database, "settings", "site"));
     if (settingsSnapshot.exists()) applySiteSettings(settingsSnapshot.data());
     const snapshot = await getDocs(collection(database, "posts"));

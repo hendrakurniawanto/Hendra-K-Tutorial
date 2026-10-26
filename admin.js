@@ -15,6 +15,9 @@ const postList = document.querySelector("#admin-post-list");
 const settingsForm = document.querySelector("#site-settings-form");
 const googleLogin = document.querySelector("#google-login");
 const heroImageFile = document.querySelector("#setting-hero-image-file");
+const statsTotal = document.querySelector("#admin-stats-total");
+const statsMessage = document.querySelector("#admin-stats-message");
+const monthlyStats = document.querySelector("#admin-monthly-stats");
 let auth;
 let database;
 let storage;
@@ -99,6 +102,46 @@ async function loadPosts() {
     showMessage(dashboardMessage, "Postingan awal berhasil dimasukkan ke database.");
   }
   renderPosts();
+}
+
+function formatMonth(month) {
+  const [year, monthNumber] = month.split("-");
+  return new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" })
+    .format(new Date(Number(year), Number(monthNumber) - 1, 1));
+}
+
+async function loadViewStats() {
+  try {
+    const snapshot = await getDocs(collection(database, "pageViews"));
+    const titleById = new Map(posts.map((post) => [post.id, post.title]));
+    const monthly = new Map();
+    let total = 0;
+    snapshot.forEach((view) => {
+      const data = view.data();
+      if (!data.month || !data.postId) return;
+      total += 1;
+      if (!monthly.has(data.month)) monthly.set(data.month, { total: 0, posts: new Map() });
+      const monthData = monthly.get(data.month);
+      monthData.total += 1;
+      monthData.posts.set(data.postId, (monthData.posts.get(data.postId) || 0) + 1);
+    });
+
+    statsTotal.textContent = `${total} kunjungan`;
+    statsMessage.textContent = total ? "Ringkasan kunjungan berdasarkan event yang tercatat." : "Belum ada kunjungan yang tercatat.";
+    monthlyStats.innerHTML = [...monthly.entries()]
+      .sort(([firstMonth], [secondMonth]) => secondMonth.localeCompare(firstMonth))
+      .map(([month, data]) => {
+        const popularPosts = [...data.posts.entries()]
+          .sort(([, firstCount], [, secondCount]) => secondCount - firstCount)
+          .map(([postId, count]) => `<li>${escapeHtml(titleById.get(postId) || postId)} <strong>${count}</strong></li>`)
+          .join("");
+        return `<article class="stats-month"><div><strong>${escapeHtml(formatMonth(month))}</strong><span>${data.total} kunjungan</span></div><ol>${popularPosts}</ol></article>`;
+      })
+      .join("");
+  } catch (error) {
+    statsMessage.textContent = getErrorMessage(error);
+    statsMessage.classList.add("is-error");
+  }
 }
 
 function fillSettingsForm(settings) {
@@ -327,7 +370,9 @@ function handleAuthenticatedUser(user) {
   } else {
     showMessage(loginMessage, "Login berhasil.");
   }
-  loadPosts().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
+  loadPosts()
+    .then(() => loadViewStats())
+    .catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
   loadSiteSettings().catch((error) => showMessage(dashboardMessage, getErrorMessage(error), true));
 }
 

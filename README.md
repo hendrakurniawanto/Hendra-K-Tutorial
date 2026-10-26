@@ -16,9 +16,11 @@ Gambar utama dapat diganti dari kolom **URL gambar utama** dengan alamat gambar 
 
 Jika fitur unggah dipakai, deploy aturan Storage dengan Firebase CLI: `firebase deploy --only storage`. Pastikan Firebase Storage sudah dibuat pada project `hendra-k-tutorial`.
 
+Statistik kunjungan memakai koleksi Firestore `pageViews`. Setelah memperbarui aturan pada `firestore.rules`, deploy dengan `firebase deploy --only firestore:rules` agar kunjungan dapat dicatat dan dibaca dashboard admin.
+
 ## Sinkronisasi video YouTube
 
-Workflow GitHub Pages memeriksa playlist upload channel YouTube `@hendra.k` setiap 6 jam dan saat workflow dijalankan manual. Video minimal 4 menit akan ditambahkan ke website sebagai postingan dengan embed YouTube; live stream dan video yang lebih pendek dilewati. Seluruh deskripsi video ditampilkan di halaman artikel, sedangkan kartu tutorial memakai ringkasan pendek. Sinkronisasi memakai playlist upload, bukan pencarian umum, supaya pemakaian kuota sangat kecil. Agar sinkronisasi aktif, buat API key YouTube Data API v3 lalu simpan sebagai GitHub Actions secret bernama `YOUTUBE_API_KEY` pada repository. API key hanya dipakai oleh workflow, bukan oleh halaman publik.
+Workflow GitHub Pages memeriksa RSS publik channel YouTube `@hendra.k` setiap 6 jam dan saat workflow dijalankan manual. Daftar video disimpan sebagai feed statis tanpa YouTube Data API key. Seluruh deskripsi video ditampilkan di halaman artikel, sedangkan kartu tutorial memakai ringkasan pendek. RSS publik tidak menyediakan durasi secara konsisten, sehingga filter video panjang/live tidak dapat dijamin tanpa YouTube Data API atau autentikasi tambahan.
 
 Setiap kartu, gambar, dan judul postingan membuka halaman artikel tersendiri. Untuk menampilkan judul yang bisa diklik, tulis format `[Teks yang tampil](https://alamat-link)` di isi postingan, misalnya `[Baca panduan resmi](https://example.com/panduan)`. URL polos `https://...` tetap didukung. URL YouTube akan menampilkan thumbnail preview; klik preview untuk membuka videonya di YouTube.
 

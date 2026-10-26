@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { doc, getDoc, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { addDoc, collection, doc, getDoc, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
 import { escapeHtml, renderLinkedText } from "./content-utils.js?v=2";
@@ -8,6 +8,13 @@ const loading = document.querySelector("#article-loading");
 const articleElement = document.querySelector("#article-detail");
 const notFound = document.querySelector("#article-not-found");
 const articleId = new URLSearchParams(window.location.search).get("id");
+let database;
+
+function getDatabase() {
+  if (!database && isFirebaseConfigured) database = getFirestore(initializeApp(firebaseConfig));
+  return database;
+}
+const youtubeChannelUrl = "https://www.youtube.com/@hendra.k?sub_confirmation=1";
 
 function setMeta(selector, attribute, value) {
   let element = document.querySelector(selector);
@@ -49,7 +56,6 @@ function updateVideoSchema(post, canonicalUrl) {
     thumbnailUrl: post.image ? [post.image] : [],
     uploadDate: post.uploadDate || post.date,
     duration: post.duration,
-    embedUrl: `https://www.youtube-nocookie.com/embed/${post.youtubeId}`,
     contentUrl: post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`,
     url: canonicalUrl,
     mainEntityOfPage: canonicalUrl,
@@ -72,11 +78,21 @@ function renderSection(section) {
 
 function renderPost(post) {
   const content = Array.isArray(post.content) ? post.content.map(renderSection).join("") : "";
-  const image = post.image
+  const image = post.image && !post.youtubeId
     ? `<img class="article-cover" src="${escapeHtml(post.image)}" alt="${escapeHtml(post.alt || post.title)}">`
     : "";
   const video = post.youtubeId
-    ? `<div class="article-video"><iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(post.youtubeId)}?rel=0" title="${escapeHtml(post.title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`
+    ? `<section class="article-video-card" aria-label="Video YouTube">
+        <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(post.youtubeId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
+        <div class="article-video-card-body">
+          <p class="eyebrow">VIDEO YOUTUBE</p>
+          <h2>${escapeHtml(post.title)}</h2>
+          <div class="article-video-actions">
+            <a class="button button-dark" href="${escapeHtml(post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`)}" target="_blank" rel="noopener noreferrer">Tonton &amp; Komentar di YouTube <span aria-hidden="true">↗</span></a>
+            <a class="button button-light" href="${youtubeChannelUrl}" target="_blank" rel="noopener noreferrer">Subscribe Channel Hendra K <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </section>`
     : "";
   const youtubeButton = post.youtubeUrl
     ? `<a class="button button-dark" href="${escapeHtml(post.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Tonton di YouTube <span aria-hidden="true">↗</span></a>`
@@ -112,6 +128,20 @@ function renderPost(post) {
   });
   articleElement.hidden = false;
   loading.hidden = true;
+  recordPageView(post.id);
+}
+
+async function recordPageView(postId) {
+  if (!isFirebaseConfigured || !postId) return;
+  const month = new Date().toISOString().slice(0, 7);
+  const storageKey = `hendra-page-view:${postId}:${month}`;
+  try {
+    if (localStorage.getItem(storageKey)) return;
+    await addDoc(collection(getDatabase(), "pageViews"), { postId, month, createdAt: Date.now() });
+    localStorage.setItem(storageKey, "1");
+  } catch (error) {
+    console.warn("Kunjungan artikel gagal dicatat.", error);
+  }
 }
 
 async function loadPost() {
@@ -127,9 +157,7 @@ async function loadPost() {
   }
   if (isFirebaseConfigured && articleId) {
     try {
-      const app = initializeApp(firebaseConfig);
-      const database = getFirestore(app);
-      const snapshot = await getDoc(doc(database, "posts", articleId));
+      const snapshot = await getDoc(doc(getDatabase(), "posts", articleId));
       if (snapshot.exists()) post = { id: snapshot.id, ...snapshot.data() };
     } catch (error) {
       console.warn("Postingan online gagal dimuat; mencoba konten lokal.", error);
