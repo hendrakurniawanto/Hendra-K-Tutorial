@@ -252,19 +252,27 @@ if (isFirebaseConfigured) {
     } catch (error) {
       console.warn("Statistik kunjungan gagal dimuat; postingan tetap ditampilkan.", error);
     }
-    const settingsSnapshot = await getDoc(doc(database, "settings", "site"));
-    if (settingsSnapshot.exists()) applySiteSettings(settingsSnapshot.data());
-    const snapshot = await getDocs(collection(database, "posts"));
-    if (!snapshot.empty) {
-      tutorials = [
-        ...youtubePosts,
-        ...snapshot.docs.map((postDocument) => ({ id: postDocument.id, ...postDocument.data() }))
-      ];
-      tutorials.sort((first, second) => (second.createdAt || 0) - (first.createdAt || 0));
-      renderCards();
-    } else if (youtubePosts.length) {
-      tutorials = [...youtubePosts, ...defaultTutorials];
-      renderCards();
+    try {
+      const settingsSnapshot = await getDoc(doc(database, "settings", "site"));
+      if (settingsSnapshot.exists()) applySiteSettings(settingsSnapshot.data());
+    } catch (error) {
+      console.warn("Pengaturan website gagal dimuat; memakai pengaturan lokal.", error);
+    }
+    try {
+      const snapshot = await getDocs(collection(database, "posts"));
+      if (!snapshot.empty) {
+        tutorials = [
+          ...youtubePosts,
+          ...snapshot.docs.map((postDocument) => ({ id: postDocument.id, ...postDocument.data() }))
+        ];
+        tutorials.sort((first, second) => (second.createdAt || 0) - (first.createdAt || 0));
+        renderCards();
+      } else if (youtubePosts.length) {
+        tutorials = [...youtubePosts, ...defaultTutorials];
+        renderCards();
+      }
+    } catch (error) {
+      console.warn("Postingan Firebase gagal dimuat; menampilkan konten lokal.", error);
     }
   } catch (error) {
     console.warn("Postingan Firebase gagal dimuat; menampilkan konten lokal.", error);
