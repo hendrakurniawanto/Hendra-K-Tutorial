@@ -35,13 +35,13 @@
           <button class="sign-out" id="sign-out" type="button">Keluar</button>
         </div>
         <p class="admin-message" id="dashboard-message" role="status"></p>
-        <nav class="admin-nav" aria-label="Menu dashboard admin">
-          <button type="button" class="is-active" data-admin-view="stats" aria-selected="true">Statistik</button>
-          <button type="button" data-admin-view="settings" aria-selected="false">Pengaturan website</button>
-          <button type="button" data-admin-view="create" aria-selected="false">Buat postingan</button>
-          <button type="button" data-admin-view="posts" aria-selected="false">Daftar postingan</button>
+        <nav class="admin-nav" role="tablist" aria-label="Menu dashboard admin">
+          <button id="admin-tab-stats" type="button" role="tab" class="is-active" data-admin-view="stats" aria-controls="admin-view-stats" aria-selected="true">Statistik</button>
+          <button id="admin-tab-settings" type="button" role="tab" data-admin-view="settings" aria-controls="admin-view-settings" aria-selected="false">Pengaturan website</button>
+          <button id="admin-tab-create" type="button" role="tab" data-admin-view="create" aria-controls="admin-view-create" aria-selected="false">Buat postingan</button>
+          <button id="admin-tab-posts" type="button" role="tab" data-admin-view="posts" aria-controls="admin-view-posts" aria-selected="false">Daftar postingan</button>
         </nav>
-        <section class="site-settings-panel admin-view" id="admin-view-settings" aria-labelledby="site-settings-title" hidden>
+        <section class="site-settings-panel admin-view" id="admin-view-settings" role="tabpanel" aria-labelledby="admin-tab-settings" hidden>
           <div class="settings-heading">
             <div>
               <p class="eyebrow">TAMPILAN PUBLIK</p>
@@ -91,7 +91,7 @@
             </div>
           </form>
         </section>
-        <section class="admin-stats admin-view" id="admin-view-stats" aria-labelledby="admin-stats-title">
+        <section class="admin-stats admin-view" id="admin-view-stats" role="tabpanel" aria-labelledby="admin-tab-stats">
           <div class="settings-heading">
             <div>
               <p class="eyebrow">ANALITIK WEBSITE</p>
@@ -102,7 +102,7 @@
           <p class="field-hint" id="admin-stats-message">Memuat statistik...</p>
           <div id="admin-monthly-stats"></div>
         </section>
-        <form class="post-form admin-view" id="admin-view-create" aria-labelledby="post-form-title" hidden>
+        <form class="post-form admin-view" id="admin-view-create" role="tabpanel" aria-labelledby="admin-tab-create" hidden>
           <h2 id="post-form-title">Buat postingan</h2>
           <input id="post-id" type="hidden">
           <label>Judul<input id="post-title" name="title" required maxlength="100"></label>
@@ -119,7 +119,7 @@
             <button class="button button-light" id="post-cancel" type="button" hidden>Batal edit</button>
           </div>
         </form>
-        <section class="admin-posts admin-view" id="admin-view-posts" aria-labelledby="posts-title" hidden>
+        <section class="admin-posts admin-view" id="admin-view-posts" role="tabpanel" aria-labelledby="admin-tab-posts" hidden>
           <h2 id="posts-title">Postingan saat ini <span id="admin-post-count"></span></h2>
           <div id="admin-post-list"></div>
         </section>

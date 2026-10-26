@@ -48,12 +48,24 @@ function showAdminView(viewName) {
     const isActive = button.dataset.adminView === viewName;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-selected", String(isActive));
+    button.tabIndex = isActive ? 0 : -1;
   });
 }
 
 adminViewButtons.forEach((button) => {
   button.addEventListener("click", () => showAdminView(button.dataset.adminView));
+  button.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+    event.preventDefault();
+    const currentIndex = [...adminViewButtons].indexOf(button);
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    const nextButton = adminViewButtons[(currentIndex + direction + adminViewButtons.length) % adminViewButtons.length];
+    showAdminView(nextButton.dataset.adminView);
+    nextButton.focus();
+  });
 });
+
+showAdminView("stats");
 
 function getErrorMessage(error) {
   const messages = {
