@@ -66,13 +66,15 @@ showAdminView("stats");
 
 function getErrorMessage(error) {
   const messages = {
-    "auth/unauthorized-domain": "Domain website belum diizinkan di Firebase Authentication.",
+    "auth/unauthorized-domain": `Domain ${window.location.hostname} belum diizinkan di Firebase Authentication. Tambahkan domain ini di Firebase Console > Authentication > Settings > Authorized domains.`,
     "auth/popup-closed-by-user": "Jendela login ditutup sebelum proses selesai.",
     "auth/popup-blocked": "Popup login diblokir browser. Izinkan popup untuk website ini lalu coba lagi.",
     "auth/cancelled-popup-request": "Permintaan login lain sedang berjalan. Tunggu sebentar lalu coba lagi.",
     "auth/network-request-failed": "Koneksi login Google gagal. Periksa koneksi internet lalu coba lagi.",
     "auth/operation-not-allowed": "Login Google belum diaktifkan pada Firebase Authentication.",
     "auth/invalid-credential": "Login Google tidak berhasil. Pilih akun admin yang benar lalu coba lagi.",
+    "auth/invalid-api-key": "Konfigurasi Firebase tidak valid. Periksa API key dan project Firebase.",
+    "auth/internal-error": "Firebase mengalami kendala internal saat login. Muat ulang halaman lalu coba lagi.",
     "storage/unauthorized": "Akses unggah gambar ditolak. Pastikan akun admin dan Storage Rules sudah benar.",
     "permission-denied": "Akses ditolak Firestore. Pastikan Firestore Rules dan email admin sudah benar.",
     "unavailable": "Firebase tidak dapat dijangkau. Periksa koneksi internet."
