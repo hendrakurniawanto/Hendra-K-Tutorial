@@ -4,13 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f5f3ed">
-    <meta name="description" content="Tutorial praktis seputar web, teknologi, dan produktivitas dari Hendra K. Belajar hal baru, satu langkah setiap kali.">
-    <title>HENDRA K — Belajar, Bikin, Bagikan</title>
+    <meta name="description" content="Kumpulan video tutorial dan tips kreator dari channel YouTube Hendra K. Temukan panduan praktis tentang web, teknologi, produktivitas, dan hal digital.">
+    <link rel="canonical" href="https://hendrakurniawanto.github.io/Hendra-K-Tutorial/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Hendra K Tutorial - Kumpulan Video Tutorial &amp; Tips Kreator">
+    <meta property="og:description" content="Kumpulan video tutorial dan tips kreator dari channel YouTube Hendra K.">
+    <meta property="og:url" content="https://hendrakurniawanto.github.io/Hendra-K-Tutorial/">
+    <meta property="og:site_name" content="Hendra K Tutorial">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hendra K Tutorial - Kumpulan Video Tutorial &amp; Tips Kreator">
+    <meta name="twitter:description" content="Kumpulan video tutorial dan tips kreator dari channel YouTube Hendra K.">
+    <script type="application/ld+json" id="video-list-schema">{"@context":"https://schema.org","@type":"ItemList","itemListElement":[]}</script>
+    <title>Hendra K Tutorial - Kumpulan Video Tutorial &amp; Tips Kreator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script type="module" src="app.js?v=5"></script>
+    <script type="module" src="app.js?v=6"></script>
   </head>
   <body>
     <header class="site-header">
@@ -62,7 +72,10 @@
         </div>
 
         <div class="results-meta"><span id="results-count" aria-live="polite">06 TUTORIAL</span><span>DIKURASI OLEH HENDRA</span></div>
+        <div class="youtube-feed-status" id="youtube-feed-status" role="status" aria-live="polite" hidden></div>
+        <button class="feed-retry-button" id="youtube-feed-retry" type="button" hidden>Coba lagi</button>
         <div class="tutorial-grid" id="tutorial-grid"></div>
+        <button class="load-more-button" id="load-more-tutorials" type="button" hidden>Muat lebih banyak</button>
         <p class="empty-state" id="empty-state" hidden>Tidak ada tutorial yang cocok. Coba kata kunci atau kategori lain.</p>
       </section>
 
