@@ -19,18 +19,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=4">
-    <script type="module" src="app.js?v=9"></script>
+    <link rel="stylesheet" href="styles.css?v=5">
+    <script type="module" src="app.js?v=10"></script>
   </head>
   <body>
     <header class="site-header">
       <a class="wordmark" id="site-brand" href="#beranda" aria-label="HENDRA K, beranda">HENDRA <span>K.</span></a>
-      <nav class="main-nav" role="tablist" aria-label="Navigasi utama">
-        <button id="content-tab" type="button" role="tab" class="is-active" data-home-tab="content" aria-controls="home-view-content" aria-selected="true">Konten</button>
-        <button id="about-tab" type="button" role="tab" data-home-tab="about" aria-controls="home-view-about" aria-selected="false">Tentang</button>
-        <button id="playlist-tab" type="button" role="tab" data-home-tab="playlist" aria-controls="home-view-playlist" aria-selected="false">Playlist</button>
-        <button id="feedback-tab" type="button" role="tab" data-home-tab="feedback" aria-controls="home-view-feedback" aria-selected="false">Masukan</button>
-      </nav>
       <div class="header-actions">
         <a class="admin-open" href="admin.html">Admin <span aria-hidden="true">↗</span></a>
         <a class="header-link" href="#tutorial">Mulai belajar <span aria-hidden="true">↘</span></a>
@@ -53,6 +47,15 @@
         </div>
         <div class="hero-ticker" aria-hidden="true"><span>CATATAN DIGITAL</span><span>✳</span><span>LANGKAH KECIL, HASIL NYATA</span><span>✳</span><span>CATATAN DIGITAL</span><span>✳</span></div>
       </section>
+
+      <div class="home-tab-bar">
+        <nav class="home-tabs" role="tablist" aria-label="Navigasi konten homepage">
+          <button id="content-tab" type="button" role="tab" class="is-active" data-home-tab="content" aria-controls="home-view-content" aria-selected="true">Konten</button>
+          <button id="about-tab" type="button" role="tab" data-home-tab="about" aria-controls="home-view-about" aria-selected="false">Tentang</button>
+          <button id="playlist-tab" type="button" role="tab" data-home-tab="playlist" aria-controls="home-view-playlist" aria-selected="false">Playlist</button>
+          <button id="feedback-tab" type="button" role="tab" data-home-tab="feedback" aria-controls="home-view-feedback" aria-selected="false">Masukan</button>
+        </nav>
+      </div>
 
       <section class="tutorial-section home-view" id="home-view-content" role="tabpanel" aria-labelledby="content-tab">
         <div class="section-heading">

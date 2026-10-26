@@ -25,6 +25,10 @@ a { color: inherit; text-decoration: none; }
 .main-nav button { padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; font: inherit; }
 .main-nav a:hover, .main-nav button:hover, .main-nav button.is-active, .site-footer a:hover { color: var(--red); }
 .home-view[hidden] { display: none; }
+.home-tab-bar { padding: 0 7.1%; border-bottom: 1px solid var(--line); background: #fbfaf6; }
+.home-tabs { display: flex; max-width: 760px; gap: 5px; margin: 0 auto; }
+.home-tabs button { min-height: 48px; padding: 0 16px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); cursor: pointer; font: 600 11px var(--sans); }
+.home-tabs button:hover, .home-tabs button.is-active { border-bottom-color: var(--red); color: var(--ink); }
 .header-link { font-size: 12px; font-weight: 700; }
 .header-link span { margin-left: 12px; color: var(--red); font-size: 16px; }
 .hero { position: relative; min-height: 610px; padding: 88px 7.1% 78px; display: grid; grid-template-columns: .93fr 1.07fr; align-items: center; gap: 5.7%; overflow: hidden; }
@@ -240,7 +244,9 @@ h1, h2, p { margin-top: 0; }
 }
 @media (max-width: 620px) {
   .site-header { height: 64px; }
-  .main-nav { max-width: 46vw; gap: 18px; margin-left: 0; overflow-x: auto; font-size: 11px; white-space: nowrap; }
+  .home-tab-bar { padding: 0 6%; overflow-x: auto; }
+  .home-tabs { width: max-content; min-width: 100%; justify-content: space-between; }
+  .home-tabs button { padding: 0 10px; }
   .header-link { font-size: 0; }
   .header-link span { font-size: 19px; }
   .header-actions { gap: 12px; }
