@@ -14,7 +14,19 @@ function getDatabase() {
   if (!database && isFirebaseConfigured) database = getFirestore(initializeApp(firebaseConfig));
   return database;
 }
-const youtubeChannelUrl = "https://www.youtube.com/@hendra.k?sub_confirmation=1";
+
+function getYouTubeVideoId(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1).split("/")[0];
+    if (!["youtube.com", "www.youtube.com", "m.youtube.com", "youtube-nocookie.com", "www.youtube-nocookie.com"].includes(parsed.hostname)) return "";
+    if (parsed.pathname === "/watch") return parsed.searchParams.get("v") || "";
+    const match = parsed.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/);
+    return match ? match[1] : "";
+  } catch {
+    return "";
+  }
+}
 
 function setMeta(selector, attribute, value) {
   let element = document.querySelector(selector);
@@ -44,7 +56,8 @@ function updateSeoMetadata(post, canonicalUrl) {
 
 function updateVideoSchema(post, canonicalUrl) {
   const schemaElement = document.querySelector("#video-schema");
-  if (!post.youtubeId) {
+  const videoId = post.youtubeId || getYouTubeVideoId(post.youtubeUrl || "");
+  if (!videoId) {
     schemaElement.textContent = "{}";
     return;
   }
@@ -56,7 +69,7 @@ function updateVideoSchema(post, canonicalUrl) {
     thumbnailUrl: post.image ? [post.image] : [],
     uploadDate: post.uploadDate || post.date,
     duration: post.duration,
-    contentUrl: post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`,
+    contentUrl: post.youtubeUrl || `https://www.youtube.com/watch?v=${videoId}`,
     url: canonicalUrl,
     mainEntityOfPage: canonicalUrl,
     publisher: {
@@ -78,13 +91,16 @@ function renderSection(section) {
 
 function renderPost(post) {
   const content = Array.isArray(post.content) ? post.content.map(renderSection).join("") : "";
-  const image = post.image && !post.youtubeId
+  const videoId = post.youtubeId || getYouTubeVideoId(post.youtubeUrl || "");
+  const videoUrl = post.youtubeUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : "");
+  const hasVideo = Boolean(videoId || post.youtubeUrl);
+  const image = post.image && !hasVideo
     ? `<img class="article-cover" src="${escapeHtml(post.image)}" alt="${escapeHtml(post.alt || post.title)}">`
     : "";
-  const video = post.youtubeId
+  const video = hasVideo
     ? `<section class="article-video-card" aria-label="Video YouTube">
-        <a class="article-video-thumbnail" href="${escapeHtml(post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`)}" target="_blank" rel="noopener noreferrer" aria-label="Tonton ${escapeHtml(post.title)} di YouTube">
-          <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(post.youtubeId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
+        <a class="article-video-thumbnail" href="${escapeHtml(videoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Tonton ${escapeHtml(post.title)} di YouTube">
+          <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
         </a>
       </section>`
     : "";
