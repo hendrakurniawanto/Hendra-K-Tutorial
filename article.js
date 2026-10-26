@@ -83,7 +83,9 @@ function renderPost(post) {
     : "";
   const video = post.youtubeId
     ? `<section class="article-video-card" aria-label="Video YouTube">
-        <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(post.youtubeId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
+        <a class="article-video-thumbnail" href="${escapeHtml(post.youtubeUrl || `https://www.youtube.com/watch?v=${post.youtubeId}`)}" target="_blank" rel="noopener noreferrer" aria-label="Tonton ${escapeHtml(post.title)} di YouTube">
+          <img src="${escapeHtml(post.image || `https://i.ytimg.com/vi/${encodeURIComponent(post.youtubeId)}/hqdefault.jpg`)}" alt="Thumbnail ${escapeHtml(post.title)}" loading="lazy">
+        </a>
         <div class="article-video-card-body">
           <p class="eyebrow">VIDEO YOUTUBE</p>
           <h2>${escapeHtml(post.title)}</h2>
@@ -104,10 +106,10 @@ function renderPost(post) {
       <p class="article-date">${escapeHtml(post.date || "")}</p>
       <h1>${escapeHtml(post.title)}</h1>
       <p class="article-summary">${escapeHtml(post.description || "")}</p>
-      ${video}
       <div class="article-byline"><span class="byline-mark">HK</span><span>HENDRA K.<br><small>CATATAN BELAJAR</small></span></div>
     </header>
     <div class="article-content">${content}</div>
+    ${video}
     <div class="article-end"><span>✳</span> TETAP BELAJAR, TETAP BERBAGI.</div>
   `;
   const restrictedDownloads = new Set([
