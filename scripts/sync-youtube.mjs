@@ -38,18 +38,18 @@ async function main() {
     return;
   }
 
-  const channelData = await request("channels", { part: "id", forHandle: channelHandle });
+  const channelData = await request("channels", { part: "id,contentDetails", forHandle: channelHandle });
   const channelId = channelData.items?.[0]?.id;
   if (!channelId) throw new Error(`Channel YouTube ${channelHandle} tidak ditemukan.`);
+  const uploadsPlaylistId = channelData.items[0].contentDetails?.relatedPlaylists?.uploads;
+  if (!uploadsPlaylistId) throw new Error(`Playlist upload channel ${channelHandle} tidak ditemukan.`);
 
-  const searchData = await request("search", {
-    part: "snippet",
-    channelId,
+  const uploadsData = await request("playlistItems", {
+    part: "snippet,contentDetails",
+    playlistId: uploadsPlaylistId,
     maxResults: "50",
-    order: "date",
-    type: "video"
   });
-  const videoIds = searchData.items.map((item) => item.id.videoId).filter(Boolean);
+  const videoIds = uploadsData.items.map((item) => item.contentDetails?.videoId).filter(Boolean);
   if (!videoIds.length) {
     await writeFile(outputPath, "[]\n");
     return;
