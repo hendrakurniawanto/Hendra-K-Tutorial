@@ -18,19 +18,6 @@ export function normalizeImageUrl(value) {
   }
 }
 
-function getYouTubeVideoId(url) {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1).split("/")[0];
-    if (!["youtube.com", "www.youtube.com", "m.youtube.com", "youtube-nocookie.com", "www.youtube-nocookie.com"].includes(parsed.hostname)) return "";
-    if (parsed.pathname === "/watch") return parsed.searchParams.get("v") || "";
-    const match = parsed.pathname.match(/^\/(?:embed|shorts|live)\/([^/?]+)/);
-    return match ? match[1] : "";
-  } catch {
-    return "";
-  }
-}
-
 function renderLink(url, label = "") {
   const safeUrl = escapeHtml(url);
   const restrictedDownloads = new Set([
@@ -41,19 +28,8 @@ function renderLink(url, label = "") {
     return '<span class="article-link-disabled">Tautan unduhan ini tidak ditampilkan.</span>';
   }
 
-  const videoId = getYouTubeVideoId(url);
-  if (!videoId) {
-    const linkText = label ? escapeHtml(label) : safeUrl;
-    return `<a class="article-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${linkText}<span aria-hidden="true"> ↗</span></a>`;
-  }
-
-  const videoUrl = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
-  const thumbnail = `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
-  return `<a class="youtube-preview" href="${videoUrl}" target="_blank" rel="noopener noreferrer" aria-label="Tonton video di YouTube">
-    <img src="${thumbnail}" alt="Preview video YouTube" loading="lazy">
-    <span class="youtube-play" aria-hidden="true">▶</span>
-    <span class="youtube-caption"><span>VIDEO YOUTUBE</span><strong>${escapeHtml(label || "Buka video di YouTube")} ↗</strong></span>
-  </a>`;
+  const linkText = label ? escapeHtml(label) : safeUrl;
+  return `<a class="article-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${linkText}<span aria-hidden="true"> ↗</span></a>`;
 }
 
 export function renderLinkedText(value) {
