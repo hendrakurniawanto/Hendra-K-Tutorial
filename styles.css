@@ -231,8 +231,8 @@ h1, h2, p { margin-top: 0; }
 
 @media (max-width: 900px) {
   .site-header { padding-right: 5%; padding-left: 5%; }
-  .hero { min-height: 560px; padding-right: 5%; padding-left: 5%; gap: 4%; }
-  .hero-art { height: 350px; }
+  .hero { display: block; min-height: auto; padding: 64px 5% 52px; }
+  .hero-art, .hero-ticker, .hero-footnote { display: none; }
   .hero h1 { font-size: clamp(54px, 8vw, 72px); }
   .tutorial-section { padding-right: 5%; padding-left: 5%; }
   .tutorial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 18px; }
