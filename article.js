@@ -94,10 +94,6 @@ function renderPost(post) {
         </div>
       </section>`
     : "";
-  const youtubeButton = post.youtubeUrl
-    ? `<a class="button button-dark" href="${escapeHtml(post.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Tonton di YouTube <span aria-hidden="true">↗</span></a>`
-    : "";
-
   const canonicalUrl = new URL(`article.html?id=${encodeURIComponent(post.id)}`, window.location.href).href;
   updateSeoMetadata(post, canonicalUrl);
   updateVideoSchema(post, canonicalUrl);
@@ -109,7 +105,6 @@ function renderPost(post) {
       <p class="article-date">${escapeHtml(post.date || "")}</p>
       <h1>${escapeHtml(post.title)}</h1>
       <p class="article-summary">${escapeHtml(post.description || "")}</p>
-      ${youtubeButton}
       <div class="article-byline"><span class="byline-mark">HK</span><span>HENDRA K.<br><small>CATATAN BELAJAR</small></span></div>
     </header>
     <div class="article-content">${content}</div>

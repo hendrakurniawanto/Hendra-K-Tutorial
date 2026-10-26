@@ -123,18 +123,17 @@ function renderCards() {
 
   grid.innerHTML = filtered.slice(0, visibleTutorialCount).map((tutorial, index) => `
     <article class="tutorial-card" style="animation-delay:${index * 55}ms">
-      <a class="card-image-wrap" href="${escapeHtml(tutorial.youtubeUrl || `article.html?id=${encodeURIComponent(tutorial.id)}`)}"${tutorial.youtubeUrl ? ' target="_blank" rel="noopener noreferrer"' : ""} aria-label="${tutorial.youtubeUrl ? "Tonton" : "Buka"} ${escapeHtml(tutorial.title)}">
+      <a class="card-image-wrap" href="article.html?id=${encodeURIComponent(tutorial.id)}" aria-label="Buka ${escapeHtml(tutorial.title)}">
         <img src="${escapeHtml(tutorial.image)}" alt="${escapeHtml(tutorial.alt)}" loading="lazy">
         <span class="card-category">${escapeHtml(tutorial.category).toUpperCase()}</span>
       </a>
       <div class="card-body">
         <div class="card-meta"><span>${escapeHtml(tutorial.date)}</span><span>${escapeHtml(tutorial.readTime)}</span></div>
-        <h3><a href="${escapeHtml(tutorial.youtubeUrl || `article.html?id=${encodeURIComponent(tutorial.id)}`)}"${tutorial.youtubeUrl ? ' target="_blank" rel="noopener noreferrer"' : ""}>${escapeHtml(tutorial.title)}</a></h3>
+        <h3><a href="article.html?id=${encodeURIComponent(tutorial.id)}">${escapeHtml(tutorial.title)}</a></h3>
         <p>${escapeHtml(getDescriptionPreview(tutorial.description))}</p>
         <p class="card-views">${viewCounts[tutorial.id] || 0} kunjungan</p>
         <div class="card-actions">
           <a class="read-link" href="article.html?id=${encodeURIComponent(tutorial.id)}">Baca selengkapnya <span aria-hidden="true">↗</span></a>
-          ${tutorial.youtubeUrl ? `<a class="read-link" href="${escapeHtml(tutorial.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Tonton di YouTube <span aria-hidden="true">↗</span></a>` : ""}
         </div>
       </div>
     </article>
