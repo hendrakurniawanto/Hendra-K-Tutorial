@@ -202,6 +202,7 @@ h1, h2, p { margin-top: 0; }
 .sign-out:hover { border-color: var(--ink); }
 .dashboard > .admin-message { margin: 12px 0 18px; }
 .dashboard .post-form { padding: 23px; border: 1px solid var(--line); background: #fbfaf6; }
+.dashboard .admin-view[hidden] { display: none; }
 .dashboard .admin-posts { margin-top: 28px; }
 .dashboard .admin-posts h2 { display: flex; justify-content: space-between; margin: 0 0 10px; font: 600 18px var(--display); }
 .dashboard .admin-posts h2 span { color: var(--muted); font: 10px var(--mono); }
