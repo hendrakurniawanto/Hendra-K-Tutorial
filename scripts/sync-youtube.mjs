@@ -66,20 +66,26 @@ async function main() {
       && !video.liveStreamingDetails
       && durationSeconds >= minimumDurationSeconds
     ))
-    .map(({ video, durationSeconds }) => ({
+    .map(({ video, durationSeconds }) => {
+      const description = video.snippet.description || "Deskripsi video belum tersedia.";
+      return {
       id: `youtube-${video.id}`,
       title: video.snippet.title,
       category: "Video",
       date: formatDate(video.snippet.publishedAt),
       readTime: formatReadTime(durationSeconds),
-      description: video.snippet.description.slice(0, 220),
+      description: description.slice(0, 220),
       image: video.snippet.thumbnails?.high?.url || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
       alt: `Thumbnail video YouTube: ${video.snippet.title}`,
       youtubeId: video.id,
       youtubeUrl: `https://www.youtube.com/watch?v=${video.id}`,
-      content: [{ heading: "Tonton video", text: `Video ini tersedia di YouTube: ${`https://www.youtube.com/watch?v=${video.id}`}` }],
+      content: [
+        { heading: "Deskripsi video", text: description },
+        { heading: "Tonton video", text: `Video ini tersedia di YouTube: https://www.youtube.com/watch?v=${video.id}` }
+      ],
       createdAt: Date.parse(video.snippet.publishedAt)
-    }))
+      };
+    })
     .sort((first, second) => second.createdAt - first.createdAt);
 
   await writeFile(outputPath, `${JSON.stringify(posts, null, 2)}\n`);
