@@ -19,15 +19,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <script type="module" src="app.js?v=7"></script>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <script type="module" src="app.js?v=8"></script>
   </head>
   <body>
     <header class="site-header">
       <a class="wordmark" id="site-brand" href="#beranda" aria-label="HENDRA K, beranda">HENDRA <span>K.</span></a>
       <nav class="main-nav" aria-label="Navigasi utama">
-        <a href="#tutorial">Tutorial</a>
+        <a href="#tutorial">Konten</a>
         <a href="#tentang">Tentang</a>
+        <a href="#playlist">Playlist</a>
+        <a href="#masukan">Masukan</a>
       </nav>
       <div class="header-actions">
         <a class="admin-open" href="admin.html">Admin <span aria-hidden="true">↗</span></a>
@@ -86,6 +88,46 @@
           <h2><span id="about-title-line-1">Hai, aku Hendra.</span><br><span id="about-title-line-2">Suka berbagi yang kupelajari.</span></h2>
         </div>
         <p class="about-note" id="about-description">Tempat ini jadi catatan terbuka untuk hal-hal digital yang pernah kucoba. Semoga ada satu ide kecil yang berguna buat proyekmu berikutnya.</p>
+      </section>
+
+      <section class="playlist-section" id="playlist" aria-labelledby="playlist-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUTUBE HENDRA K</p>
+            <h2 id="playlist-title">Playlist pilihan<span>.</span></h2>
+          </div>
+          <p class="section-aside">Lanjutkan belajar langsung<br>dari channel utama.</p>
+        </div>
+        <div class="playlist-card">
+          <div class="playlist-card-mark" aria-hidden="true">HK<br><span>▶</span></div>
+          <div>
+            <p class="eyebrow">CHANNEL RESMI</p>
+            <h3>Semua playlist Hendra K</h3>
+            <p>Temukan rangkaian tutorial, tips kreator, dan video terbaru yang tersusun di channel YouTube Hendra K.</p>
+          </div>
+          <a class="button button-dark" href="https://www.youtube.com/@hendra.k/playlists" target="_blank" rel="noopener noreferrer">Lihat playlist <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="feedback-section" id="masukan" aria-labelledby="feedback-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">RUANG BERCERITA</p>
+            <h2 id="feedback-title">Masukan &amp; saran<span>.</span></h2>
+          </div>
+          <p class="section-aside">Punya ide topik atau menemukan<br>hal yang perlu diperbaiki?</p>
+        </div>
+        <form class="feedback-form" id="feedback-form">
+          <div class="form-row">
+            <label>Nama<input id="feedback-name" name="name" maxlength="80" placeholder="Namamu"></label>
+            <label>Email<input id="feedback-email" name="email" type="email" maxlength="120" placeholder="nama@email.com"></label>
+          </div>
+          <label>Pesan<textarea id="feedback-message" name="message" rows="5" maxlength="1000" required placeholder="Tulis masukan atau saranmu..."></textarea></label>
+          <div class="form-actions">
+            <button class="button button-dark" type="submit">Kirim masukan <span aria-hidden="true">↗</span></button>
+            <p class="feedback-status" id="feedback-status" role="status"></p>
+          </div>
+        </form>
       </section>
     </main>
 

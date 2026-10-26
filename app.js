@@ -32,6 +32,8 @@ const emptyState = document.querySelector("#empty-state");
 const loadMoreButton = document.querySelector("#load-more-tutorials");
 const youtubeFeedStatus = document.querySelector("#youtube-feed-status");
 const youtubeFeedRetry = document.querySelector("#youtube-feed-retry");
+const feedbackForm = document.querySelector("#feedback-form");
+const feedbackStatus = document.querySelector("#feedback-status");
 const tutorialsPerPage = 6;
 const youtubeCacheKey = "hendra-youtube-posts-v1";
 const youtubeCacheTtl = 6 * 60 * 60 * 1000;
@@ -226,6 +228,17 @@ document.addEventListener("keydown", (event) => {
     event.preventDefault();
     searchInput.focus();
   }
+});
+
+feedbackForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = document.querySelector("#feedback-name").value.trim() || "Pengunjung website";
+  const email = document.querySelector("#feedback-email").value.trim() || "Tidak dicantumkan";
+  const message = document.querySelector("#feedback-message").value.trim();
+  const subject = encodeURIComponent(`Masukan website dari ${name}`);
+  const body = encodeURIComponent(`Nama: ${name}\nEmail: ${email}\n\nMasukan:\n${message}`);
+  window.location.href = `mailto:hendrakurniawanto@gmail.com?subject=${subject}&body=${body}`;
+  feedbackStatus.textContent = "Aplikasi email sedang dibuka untuk mengirim masukanmu.";
 });
 
 renderCards();

@@ -100,6 +100,21 @@ h1, h2, p { margin-top: 0; }
 .about-copy h2 { font-size: 29px; line-height: 1.25; }
 .about-copy h2 span { color: var(--green); }
 .about-note { max-width: 300px; margin: 0; color: #c4c7bb; font-size: 12px; line-height: 1.9; }
+.playlist-section, .feedback-section { padding: 92px 7.1%; }
+.playlist-card { display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 28px; padding: 28px; border: 1px solid var(--line); background: #fbfaf6; }
+.playlist-card-mark { display: grid; width: 82px; height: 82px; place-content: center; background: var(--red); color: white; text-align: center; font: 700 19px/1.1 var(--display); }
+.playlist-card-mark span { color: var(--green); font-size: 14px; }
+.playlist-card h3 { margin: 0 0 9px; font: 600 23px/1.2 var(--display); }
+.playlist-card p:not(.eyebrow) { max-width: 470px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.feedback-section { background: #e9eadf; }
+.feedback-form { max-width: 720px; margin: 0 auto; }
+.feedback-form label { display: grid; gap: 7px; color: var(--muted); font: 10px var(--mono); }
+.feedback-form input, .feedback-form textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 0; outline: 0; background: #fbfaf6; color: var(--ink); font: 13px var(--sans); }
+.feedback-form textarea { resize: vertical; line-height: 1.6; }
+.feedback-form input:focus, .feedback-form textarea:focus { border-color: var(--ink); }
+.feedback-form .form-row { margin-bottom: 14px; }
+.feedback-form .form-actions { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
+.feedback-status { margin: 0; color: var(--muted); font-size: 11px; }
 .site-footer { min-height: 85px; display: flex; align-items: center; justify-content: space-between; padding: 0 7.1%; }
 .footer-mark { font-size: 14px; }
 .site-footer p, .site-footer > a:last-child { margin: 0; color: var(--muted); font-size: 10px; }
@@ -218,11 +233,12 @@ h1, h2, p { margin-top: 0; }
   .about-band { grid-template-columns: 78px 1fr; gap: 24px; padding-right: 7%; padding-left: 7%; }
   .about-stamp { width: 72px; height: 72px; }
   .about-note { grid-column: 2; }
+  .playlist-section, .feedback-section { padding-right: 5%; padding-left: 5%; }
   .site-footer { padding-right: 5%; padding-left: 5%; }
 }
 @media (max-width: 620px) {
   .site-header { height: 64px; }
-  .main-nav { gap: 18px; margin-left: 0; font-size: 11px; }
+  .main-nav { max-width: 46vw; gap: 18px; margin-left: 0; overflow-x: auto; font-size: 11px; white-space: nowrap; }
   .header-link { font-size: 0; }
   .header-link span { font-size: 19px; }
   .header-actions { gap: 12px; }
@@ -250,6 +266,11 @@ h1, h2, p { margin-top: 0; }
   .about-stamp { width: 56px; height: 56px; font-size: 15px; }
   .about-copy h2 { font-size: 23px; }
   .about-note { grid-column: 1 / -1; max-width: 390px; }
+  .playlist-section, .feedback-section { padding: 58px 6%; }
+  .playlist-card { grid-template-columns: 1fr; gap: 18px; padding: 20px; }
+  .playlist-card .button { justify-self: start; }
+  .feedback-form .form-row { grid-template-columns: 1fr; }
+  .feedback-form .form-actions { align-items: flex-start; flex-direction: column; }
   .site-footer { min-height: 80px; flex-wrap: wrap; gap: 8px 16px; padding: 16px 6%; }
   .site-footer p { order: 3; width: 100%; }
   .site-footer > a:last-child { font-size: 9px; }
