@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { addDoc, collection, doc, getDoc, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
-import { escapeHtml, renderLinkedText } from "./content-utils.js?v=3";
+import { escapeHtml, renderLinkedText, sanitizeRichHtml } from "./content-utils.js?v=4";
 
 const loading = document.querySelector("#article-loading");
 const articleElement = document.querySelector("#article-detail");
@@ -83,6 +83,7 @@ function updateVideoSchema(post, canonicalUrl) {
 }
 
 function renderSection(section) {
+  if (section.html) return `<section class="article-content-section">${sanitizeRichHtml(section.html)}</section>`;
   const heading = section.heading ? `<h2>${escapeHtml(section.heading)}</h2>` : "";
   const paragraph = section.text ? `<p>${renderLinkedText(section.text)}</p>` : "";
   const list = Array.isArray(section.list) && section.list.length

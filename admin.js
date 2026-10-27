@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
-import { normalizeImageUrl } from "./content-utils.js";
+import { normalizeImageUrl, renderLinkedText, sanitizeRichHtml } from "./content-utils.js?v=4";
 import { defaultPosts } from "./posts-data.js";
 import { defaultSiteSettings } from "./site-settings.js";
 
@@ -12,7 +12,9 @@ const loginMessage = document.querySelector("#login-message");
 const dashboardMessage = document.querySelector("#dashboard-message");
 const postForm = document.querySelector("#admin-view-create");
 const postList = document.querySelector("#admin-post-list");
-const postSections = document.querySelector("#post-sections");
+const articleEditor = document.querySelector("#post-body");
+const linkForm = document.querySelector("#post-link-form");
+const linkUrl = document.querySelector("#post-link-url");
 const settingsForm = document.querySelector("#site-settings-form");
 const googleLogin = document.querySelector("#google-login");
 const statsTotal = document.querySelector("#admin-stats-total");
@@ -326,63 +328,142 @@ function renderPosts() {
   `).join("") || '<p class="admin-empty">Belum ada postingan.</p>';
 }
 
-function addPostSection(section = {}) {
-  const sectionElement = document.createElement("section");
-  sectionElement.className = "article-section-editor";
-  sectionElement.innerHTML = `
-    <div class="article-section-editor-heading">
-      <strong></strong>
-      <button class="article-section-remove" type="button">Hapus bagian</button>
-    </div>
-    <label>Subjudul<input type="text" data-section-heading maxlength="100" placeholder="Contoh: Persiapan"></label>
-    <label>Paragraf<textarea data-section-text rows="4" placeholder="Tulis penjelasan untuk bagian ini."></textarea></label>
-    <label>Daftar langkah<textarea data-section-list rows="3" placeholder="Satu langkah per baris (opsional)"></textarea></label>
-  `;
-  sectionElement.querySelector("[data-section-heading]").value = section.heading || "";
-  sectionElement.querySelector("[data-section-text]").value = section.text || "";
-  sectionElement.querySelector("[data-section-list]").value = Array.isArray(section.list) ? section.list.join("\n") : "";
-  postSections.append(sectionElement);
-  updatePostSectionNumbers();
-}
-
-function updatePostSectionNumbers() {
-  postSections.querySelectorAll(".article-section-editor").forEach((section, index) => {
-    section.querySelector(".article-section-editor-heading strong").textContent = `Bagian ${index + 1}`;
-  });
-}
-
-function getPostContent() {
-  return [...postSections.querySelectorAll(".article-section-editor")]
-    .map((section) => ({
-      heading: section.querySelector("[data-section-heading]").value.trim(),
-      text: section.querySelector("[data-section-text]").value.trim(),
-      list: section.querySelector("[data-section-list]").value
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean)
-    }))
-    .filter((section) => section.heading || section.text || section.list.length);
+function legacyContentToHtml(content) {
+  return (Array.isArray(content) ? content : []).map((section) => {
+    if (section.html) return sanitizeRichHtml(section.html);
+    const heading = section.heading ? `<h2>${escapeHtml(section.heading)}</h2>` : "";
+    const paragraphs = String(section.text || "").split(/\n+/).filter(Boolean)
+      .map((paragraph) => `<p>${renderLinkedText(paragraph)}</p>`).join("");
+    const list = Array.isArray(section.list) && section.list.length
+      ? `<ol>${section.list.map((item) => `<li>${renderLinkedText(item)}</li>`).join("")}</ol>`
+      : "";
+    return `${heading}${paragraphs}${list}`;
+  }).join("");
 }
 
 function resetForm() {
   postForm.reset();
-  postSections.replaceChildren();
-  addPostSection();
+  articleEditor.innerHTML = "<p><br></p>";
+  linkForm.hidden = true;
+  linkUrl.value = "";
+  linkUrl.disabled = true;
   document.querySelector("#post-id").value = "";
   document.querySelector("#post-read-time").value = "5 MENIT";
   document.querySelector("#post-save").textContent = "Tambah postingan";
   document.querySelector("#post-cancel").hidden = true;
 }
 
-document.querySelector("#post-section-add").addEventListener("click", () => addPostSection());
-postSections.addEventListener("click", (event) => {
-  const removeButton = event.target.closest(".article-section-remove");
-  if (!removeButton) return;
-  removeButton.closest(".article-section-editor").remove();
-  if (!postSections.querySelector(".article-section-editor")) addPostSection();
-  else updatePostSectionNumbers();
+let savedEditorRange = null;
+
+function captureEditorRange() {
+  const selection = window.getSelection();
+  if (selection?.rangeCount && articleEditor.contains(selection.getRangeAt(0).commonAncestorContainer)) {
+    savedEditorRange = selection.getRangeAt(0).cloneRange();
+  }
+}
+
+function restoreEditorRange() {
+  articleEditor.focus();
+  const selection = window.getSelection();
+  if (!selection || !savedEditorRange || !articleEditor.contains(savedEditorRange.commonAncestorContainer)) return false;
+  selection.removeAllRanges();
+  selection.addRange(savedEditorRange);
+  return true;
+}
+
+document.addEventListener("selectionchange", captureEditorRange);
+document.querySelectorAll("[data-editor-command]").forEach((button) => {
+  button.addEventListener("pointerdown", captureEditorRange);
+  button.addEventListener("click", () => {
+    if (!restoreEditorRange()) return;
+    const command = button.dataset.editorCommand;
+    document.execCommand(command, false, button.dataset.editorValue || null);
+    articleEditor.focus();
+    captureEditorRange();
+  });
 });
-addPostSection();
+
+document.querySelector("#post-link-open").addEventListener("pointerdown", captureEditorRange);
+document.querySelector("#post-link-open").addEventListener("click", () => {
+  if (!savedEditorRange || savedEditorRange.collapsed || !articleEditor.contains(savedEditorRange.commonAncestorContainer)) {
+    showMessage(dashboardMessage, "Pilih kata atau teks yang akan diberi tautan terlebih dahulu.", true);
+    return;
+  }
+  linkForm.hidden = false;
+  linkUrl.disabled = false;
+  linkUrl.focus();
+});
+document.querySelector("#post-link-cancel").addEventListener("click", () => {
+  linkForm.hidden = true;
+  linkUrl.value = "";
+  linkUrl.disabled = true;
+  restoreEditorRange();
+});
+document.querySelector("#post-link-apply").addEventListener("click", () => {
+  if (!linkUrl.checkValidity()) {
+    linkUrl.reportValidity();
+    return;
+  }
+  if (!restoreEditorRange()) {
+    showMessage(dashboardMessage, "Pilih kembali teks yang akan diberi tautan.", true);
+    linkForm.hidden = true;
+    linkUrl.disabled = true;
+    return;
+  }
+  let url;
+  try {
+    url = new URL(linkUrl.value);
+  } catch {
+    showMessage(dashboardMessage, "Masukkan URL yang valid.", true);
+    return;
+  }
+  if (!["http:", "https:"].includes(url.protocol)) {
+    showMessage(dashboardMessage, "Tautan harus menggunakan HTTP atau HTTPS.", true);
+    return;
+  }
+  document.execCommand("createLink", false, url.href);
+  const selection = window.getSelection();
+  const anchor = selection?.anchorNode?.parentElement?.closest("a");
+  if (anchor && articleEditor.contains(anchor)) {
+    anchor.href = url.href;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+  }
+  linkForm.hidden = true;
+  linkUrl.value = "";
+  linkUrl.disabled = true;
+  articleEditor.focus();
+  captureEditorRange();
+});
+
+document.querySelector("#post-font-size").addEventListener("pointerdown", captureEditorRange);
+document.querySelector("#post-font-size").addEventListener("change", (event) => {
+  if (!restoreEditorRange()) return;
+  document.execCommand("fontSize", false, "7");
+  articleEditor.querySelectorAll('font[size="7"]').forEach((font) => {
+    const span = document.createElement("span");
+    span.style.fontSize = event.target.value;
+    span.append(...font.childNodes);
+    font.replaceWith(span);
+  });
+  captureEditorRange();
+});
+
+function styleCurrentBlock(property, value) {
+  if (!restoreEditorRange()) return;
+  const selection = window.getSelection();
+  const node = selection?.anchorNode;
+  const block = (node?.nodeType === Node.ELEMENT_NODE ? node : node?.parentElement)
+    ?.closest("p, li, h2, h3, blockquote");
+  if (block && articleEditor.contains(block)) block.style[property] = value;
+  captureEditorRange();
+}
+
+document.querySelector("#post-margin").addEventListener("pointerdown", captureEditorRange);
+document.querySelector("#post-margin").addEventListener("change", (event) => styleCurrentBlock("marginBottom", event.target.value));
+document.querySelector("#post-line-height").addEventListener("pointerdown", captureEditorRange);
+document.querySelector("#post-line-height").addEventListener("change", (event) => styleCurrentBlock("lineHeight", event.target.value));
+articleEditor.addEventListener("input", captureEditorRange);
 
 function handleAuthenticatedUser(user) {
   if (!user) {
@@ -459,10 +540,10 @@ document.querySelector("#sign-out").addEventListener("click", () => signOut(auth
 document.querySelector("#post-cancel").addEventListener("click", resetForm);
 postForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const content = getPostContent();
-  if (!content.some((section) => section.text || section.list.length)) {
-    showMessage(dashboardMessage, "Isi minimal satu paragraf atau daftar langkah pada susunan artikel.", true);
-    postSections.querySelector("[data-section-text]").focus();
+  const html = sanitizeRichHtml(articleEditor.innerHTML);
+  if (!articleEditor.innerText.trim()) {
+    showMessage(dashboardMessage, "Isi postingan tidak boleh kosong.", true);
+    articleEditor.focus();
     return;
   }
   const submit = document.querySelector("#post-save");
@@ -478,7 +559,7 @@ postForm.addEventListener("submit", async (event) => {
     description: document.querySelector("#post-description").value.trim(),
     image: document.querySelector("#post-image").value.trim(),
     alt: document.querySelector("#post-alt").value.trim(),
-    content,
+    content: [{ heading: "Isi postingan", html }],
     createdAt: previous?.createdAt || Date.now()
   };
 
@@ -511,9 +592,8 @@ postList.addEventListener("click", async (event) => {
     document.querySelector("#post-description").value = post.description;
     document.querySelector("#post-image").value = post.image;
     document.querySelector("#post-alt").value = post.alt;
-    postSections.replaceChildren();
-    (Array.isArray(post.content) ? post.content : []).forEach((section) => addPostSection(section));
-    if (!postSections.querySelector(".article-section-editor")) addPostSection();
+    articleEditor.innerHTML = legacyContentToHtml(post.content) || "<p><br></p>";
+    linkForm.hidden = true;
     document.querySelector("#post-save").textContent = "Simpan perubahan";
     document.querySelector("#post-cancel").hidden = false;
     showAdminView("create");
