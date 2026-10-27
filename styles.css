@@ -176,7 +176,25 @@ h1, h2, p { margin-top: 0; }
 .article-editor-canvas:empty::before { content: attr(data-placeholder); color: var(--muted); pointer-events: none; }
 .article-editor-canvas p { margin: 0 0 14px; }
 .article-editor-canvas h2, .article-editor-canvas h3 { margin: 12px 0 8px; font-family: var(--display); }
-.article-editor-canvas a { color: #a43d2d; text-decoration: underline; }
+.article-editor-canvas a, .article-content a:not(.article-link-disabled) {
+  display: inline;
+  padding: .08em .32em;
+  border: 1px solid #713247;
+  border-radius: 3px;
+  background: linear-gradient(110deg, #dceaf7, #efdce3);
+  color: #111;
+  font-weight: 600;
+  text-decoration: none;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.article-editor-canvas a:hover, .article-content a:not(.article-link-disabled):hover {
+  background: linear-gradient(110deg, #c8def2, #e6c6d1);
+}
+.article-editor-canvas a:focus-visible, .article-content a:not(.article-link-disabled):focus-visible {
+  outline: 2px solid #713247;
+  outline-offset: 2px;
+}
 .button-light { background: #e5e3d9; color: var(--ink); }
 .button-light:hover { background: #d9d7cc; }
 .admin-posts { margin-top: 29px; border-top: 1px solid var(--line); }
@@ -352,8 +370,6 @@ h1, h2, p { margin-top: 0; }
 .article-content-section p { margin: 0 0 14px; }
 .article-content-section ol, .article-content-section ul { display: grid; gap: 8px; padding-left: 22px; }
 .article-content-section li { padding-left: 4px; }
-.article-link { color: #a43d2d; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.article-link:hover { color: var(--ink); }
 .article-link-disabled { color: var(--muted); font-size: .92em; font-style: italic; }
 .youtube-preview { position: relative; display: block; max-width: 620px; margin: 20px 0; overflow: hidden; background: #20231f; color: white; }
 .youtube-preview img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; opacity: .88; transition: opacity .2s, transform .3s; }
