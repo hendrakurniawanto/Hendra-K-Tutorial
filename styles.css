@@ -159,6 +159,14 @@ h1, h2, p { margin-top: 0; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-actions { display: flex; gap: 9px; }
 .form-actions .button { min-height: 42px; border: 0; cursor: pointer; }
+.article-sections-editor { display: grid; gap: 12px; }
+.article-sections-heading { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.article-sections-heading h3 { margin: 0 0 5px; font: 600 16px/1.3 var(--display); }
+.article-sections-heading .button { min-height: 38px; flex: 0 0 auto; border: 0; cursor: pointer; }
+.article-section-editor { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--line); background: var(--paper); }
+.article-section-editor-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.article-section-editor-heading strong { font: 600 13px var(--display); }
+.article-section-remove { padding: 4px 0; border: 0; background: transparent; color: #a43d2d; font: 10px var(--mono); cursor: pointer; }
 .button-light { background: #e5e3d9; color: var(--ink); }
 .button-light:hover { background: #d9d7cc; }
 .admin-posts { margin-top: 29px; border-top: 1px solid var(--line); }
@@ -291,6 +299,9 @@ h1, h2, p { margin-top: 0; }
   .login-panel { margin-top: 15px; }
   .dashboard-heading { align-items: start; }
   .dashboard .post-form { padding: 16px; }
+  .article-sections-heading { align-items: stretch; flex-direction: column; }
+  .article-sections-heading .button { align-self: flex-start; }
+  .article-section-editor { padding: 12px; }
   .site-settings-panel { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {

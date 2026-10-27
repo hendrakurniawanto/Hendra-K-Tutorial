@@ -10,8 +10,9 @@ const loginPanel = document.querySelector("#login-panel");
 const dashboard = document.querySelector("#dashboard");
 const loginMessage = document.querySelector("#login-message");
 const dashboardMessage = document.querySelector("#dashboard-message");
-const postForm = document.querySelector("#post-form");
+const postForm = document.querySelector("#admin-view-create");
 const postList = document.querySelector("#admin-post-list");
+const postSections = document.querySelector("#post-sections");
 const settingsForm = document.querySelector("#site-settings-form");
 const googleLogin = document.querySelector("#google-login");
 const statsTotal = document.querySelector("#admin-stats-total");
@@ -325,13 +326,63 @@ function renderPosts() {
   `).join("") || '<p class="admin-empty">Belum ada postingan.</p>';
 }
 
+function addPostSection(section = {}) {
+  const sectionElement = document.createElement("section");
+  sectionElement.className = "article-section-editor";
+  sectionElement.innerHTML = `
+    <div class="article-section-editor-heading">
+      <strong></strong>
+      <button class="article-section-remove" type="button">Hapus bagian</button>
+    </div>
+    <label>Subjudul<input type="text" data-section-heading maxlength="100" placeholder="Contoh: Persiapan"></label>
+    <label>Paragraf<textarea data-section-text rows="4" placeholder="Tulis penjelasan untuk bagian ini."></textarea></label>
+    <label>Daftar langkah<textarea data-section-list rows="3" placeholder="Satu langkah per baris (opsional)"></textarea></label>
+  `;
+  sectionElement.querySelector("[data-section-heading]").value = section.heading || "";
+  sectionElement.querySelector("[data-section-text]").value = section.text || "";
+  sectionElement.querySelector("[data-section-list]").value = Array.isArray(section.list) ? section.list.join("\n") : "";
+  postSections.append(sectionElement);
+  updatePostSectionNumbers();
+}
+
+function updatePostSectionNumbers() {
+  postSections.querySelectorAll(".article-section-editor").forEach((section, index) => {
+    section.querySelector(".article-section-editor-heading strong").textContent = `Bagian ${index + 1}`;
+  });
+}
+
+function getPostContent() {
+  return [...postSections.querySelectorAll(".article-section-editor")]
+    .map((section) => ({
+      heading: section.querySelector("[data-section-heading]").value.trim(),
+      text: section.querySelector("[data-section-text]").value.trim(),
+      list: section.querySelector("[data-section-list]").value
+        .split("\n")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    }))
+    .filter((section) => section.heading || section.text || section.list.length);
+}
+
 function resetForm() {
   postForm.reset();
+  postSections.replaceChildren();
+  addPostSection();
   document.querySelector("#post-id").value = "";
   document.querySelector("#post-read-time").value = "5 MENIT";
   document.querySelector("#post-save").textContent = "Tambah postingan";
   document.querySelector("#post-cancel").hidden = true;
 }
+
+document.querySelector("#post-section-add").addEventListener("click", () => addPostSection());
+postSections.addEventListener("click", (event) => {
+  const removeButton = event.target.closest(".article-section-remove");
+  if (!removeButton) return;
+  removeButton.closest(".article-section-editor").remove();
+  if (!postSections.querySelector(".article-section-editor")) addPostSection();
+  else updatePostSectionNumbers();
+});
+addPostSection();
 
 function handleAuthenticatedUser(user) {
   if (!user) {
@@ -408,12 +459,17 @@ document.querySelector("#sign-out").addEventListener("click", () => signOut(auth
 document.querySelector("#post-cancel").addEventListener("click", resetForm);
 postForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const content = getPostContent();
+  if (!content.some((section) => section.text || section.list.length)) {
+    showMessage(dashboardMessage, "Isi minimal satu paragraf atau daftar langkah pada susunan artikel.", true);
+    postSections.querySelector("[data-section-text]").focus();
+    return;
+  }
   const submit = document.querySelector("#post-save");
   submit.disabled = true;
   showMessage(dashboardMessage, "Menyimpan postingan...");
   const id = document.querySelector("#post-id").value || crypto.randomUUID();
   const previous = posts.find((post) => post.id === id);
-  const body = document.querySelector("#post-body").value.trim();
   const post = {
     title: document.querySelector("#post-title").value.trim(),
     category: document.querySelector("#post-category").value,
@@ -422,7 +478,7 @@ postForm.addEventListener("submit", async (event) => {
     description: document.querySelector("#post-description").value.trim(),
     image: document.querySelector("#post-image").value.trim(),
     alt: document.querySelector("#post-alt").value.trim(),
-    content: [{ heading: "Isi postingan", text: body }],
+    content,
     createdAt: previous?.createdAt || Date.now()
   };
 
@@ -455,7 +511,9 @@ postList.addEventListener("click", async (event) => {
     document.querySelector("#post-description").value = post.description;
     document.querySelector("#post-image").value = post.image;
     document.querySelector("#post-alt").value = post.alt;
-    document.querySelector("#post-body").value = (post.content || []).map((section) => section.text || (section.list || []).join("\n")).join("\n\n");
+    postSections.replaceChildren();
+    (Array.isArray(post.content) ? post.content : []).forEach((section) => addPostSection(section));
+    if (!postSections.querySelector(".article-section-editor")) addPostSection();
     document.querySelector("#post-save").textContent = "Simpan perubahan";
     document.querySelector("#post-cancel").hidden = false;
     showAdminView("create");

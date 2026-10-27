@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=2">
-    <script type="module" src="admin.js?v=23"></script>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <script type="module" src="admin.js?v=25"></script>
   </head>
   <body class="admin-page">
     <header class="site-header">
@@ -113,7 +113,17 @@
           <label>Ringkasan<textarea id="post-description" name="description" required rows="2" maxlength="220"></textarea></label>
           <label>URL gambar<input id="post-image" name="image" type="url" placeholder="https://..." required></label>
           <label>Teks alternatif gambar<input id="post-alt" name="alt" required maxlength="140"></label>
-          <label>Isi postingan<textarea id="post-body" name="body" required rows="7" placeholder="Tulis isi tutorial. Untuk link berjudul: [Baca panduan](https://contoh.com/panduan)"></textarea><span class="field-hint">Tautan berjudul: [Teks yang tampil](https://alamat-link). URL YouTube akan ditampilkan sebagai preview video.</span></label>
+          <div class="article-sections-editor">
+            <div class="article-sections-heading">
+              <div>
+                <h3>Susunan artikel</h3>
+                <p class="field-hint">Buat beberapa bagian. Setiap bagian dapat berisi subjudul, paragraf, dan daftar langkah.</p>
+              </div>
+              <button class="button button-light" id="post-section-add" type="button">Tambah bagian</button>
+            </div>
+            <div id="post-sections"></div>
+            <span class="field-hint">Tautan berjudul: [Teks yang tampil](https://alamat-link). Tulis satu langkah per baris pada kolom daftar. URL YouTube akan ditampilkan sebagai preview video.</span>
+          </div>
           <div class="form-actions">
             <button class="button button-dark" id="post-save" type="submit">Tambah postingan</button>
             <button class="button button-light" id="post-cancel" type="button" hidden>Batal edit</button>
