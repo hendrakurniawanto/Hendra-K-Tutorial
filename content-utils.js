@@ -23,12 +23,14 @@ export function sanitizeRichHtml(value) {
     return styles.length ? ` style="${styles.join(";")}"` : "";
   }
 
-  function renderNode(node) {
-    if (node.nodeType === Node.TEXT_NODE) return escapeHtml(node.nodeValue);
+  function renderNode(node, insideLink = false) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return insideLink ? escapeHtml(node.nodeValue) : renderLinkedText(node.nodeValue);
+    }
     if (node.nodeType !== Node.ELEMENT_NODE) return "";
     if (["SCRIPT", "STYLE", "IFRAME", "OBJECT", "EMBED"].includes(node.tagName)) return "";
 
-    const children = [...node.childNodes].map(renderNode).join("");
+    const children = [...node.childNodes].map((child) => renderNode(child, insideLink || node.tagName === "A")).join("");
     if (!allowedTags.has(node.tagName)) return children;
     if (node.tagName === "BR") return "<br>";
     if (node.tagName === "A") {
@@ -80,7 +82,7 @@ export function renderLinkedText(value) {
   const lines = String(value ?? "").split("\n");
   return lines.map((line) => {
     const parts = [];
-    const urlPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|https?:\/\/[^\s<>"']+/gi;
+    const urlPattern = /\[([^\]]+)\]\s*\((https?:\/\/[^\s)]+)\)|https?:\/\/[^\s<>"']+/gi;
     let cursor = 0;
     for (const match of line.matchAll(urlPattern)) {
       const start = match.index;

@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { getAuth, GoogleAuthProvider, getRedirectResult, onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { adminEmail, firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
-import { normalizeImageUrl, renderLinkedText, sanitizeRichHtml } from "./content-utils.js?v=4";
+import { normalizeImageUrl, renderLinkedText, sanitizeRichHtml } from "./content-utils.js?v=6";
 import { defaultPosts } from "./posts-data.js";
 import { defaultSiteSettings } from "./site-settings.js";
 
