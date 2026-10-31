@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/fireba
 import { addDoc, collection, doc, getDoc, getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 import { defaultPosts } from "./posts-data.js";
-import { escapeHtml, renderLinkedText, sanitizeRichHtml } from "./content-utils.js?v=6";
+import { escapeHtml, renderLinkedText, sanitizeRichHtml } from "./content-utils.js?v=7";
 
 const loading = document.querySelector("#article-loading");
 const articleElement = document.querySelector("#article-detail");

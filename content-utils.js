@@ -47,7 +47,7 @@ export function sanitizeRichHtml(value) {
     return `<${tag}${sanitizeStyle(node)}>${children}</${tag}>`;
   }
 
-  return [...parsed.body.childNodes].map(renderNode).join("");
+  return [...parsed.body.childNodes].map((node) => renderNode(node)).join("");
 }
 
 export function normalizeImageUrl(value) {
